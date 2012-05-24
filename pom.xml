@@ -8,7 +8,7 @@
     <version>1.15</version>
   </parent>
 
-  <groupId>org.glite.ce.creamapi</groupId>
+  <groupId>org.glite.ce</groupId>
   <artifactId>cream-api-java</artifactId>
   <version>${creamapi.version}</version>
   <packaging>jar</packaging>
@@ -107,6 +107,10 @@
                   <uri>http://www.eu-emi.eu/es/2010/12/types</uri>
                   <packageName>org.glite.ce.creamapi.ws.es.creation.types</packageName>
                 </namespaceURI>
+                <namespaceURI>
+                  <uri>http://schemas.ogf.org/glue/2009/03/spec_2.0_r1</uri>
+                  <packageName>org.glite.ce.creamapi.ws.es.glue</packageName>
+                </namespaceURI>
               </namespaceURIs>
               <syncMode>sync</syncMode>
               <generateServerSide>true</generateServerSide>
@@ -139,6 +143,10 @@
                 <namespaceURI>
                   <uri>http://www.eu-emi.eu/es/2010/12/types</uri>
                   <packageName>org.glite.ce.creamapi.ws.es.activityinfo.types</packageName>
+                </namespaceURI>
+                <namespaceURI>
+                  <uri>http://schemas.ogf.org/glue/2009/03/spec_2.0_r1</uri>
+                  <packageName>org.glite.ce.creamapi.ws.es.glue</packageName>
                 </namespaceURI>
               </namespaceURIs>
               <syncMode>sync</syncMode>
@@ -214,6 +222,10 @@
                   <uri>http://www.eu-emi.eu/es/2010/12/types</uri>
                   <packageName>org.glite.ce.creamapi.ws.es.delegation.types</packageName>
                 </namespaceURI>
+                <namespaceURI>
+                  <uri>http://schemas.ogf.org/glue/2009/03/spec_2.0_r1</uri>
+                  <packageName>org.glite.ce.creamapi.ws.es.glue</packageName>
+                </namespaceURI>
               </namespaceURIs>
               <syncMode>sync</syncMode>
               <generateServerSide>true</generateServerSide>
@@ -285,11 +297,11 @@
             <configuration>
               <finalName>cream-skeleton</finalName>
               <includes>
-                <include>org/glite/ce/creamapi/ws/cream2/**/*.class</include>
+                <include>org/glite/ce/creamapi/ws/cream2/**</include>
               </includes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
             </configuration>
           </execution>
@@ -301,11 +313,11 @@
             <configuration>
               <finalName>ce-delegation-skeleton</finalName>
               <includes>
-                <include>org/glite/ce/security/delegation/**/*.class</include>
+                <include>org/glite/ce/security/delegation/**</include>
               </includes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
             </configuration>
           </execution>
@@ -321,7 +333,7 @@
               </includes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
             </configuration>
           </execution>
@@ -338,8 +350,56 @@
               </excludes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+        
+          <execution>
+            <id>install-cream-skeleton</id>
+            <phase>install</phase>
+            <goals><goal>install-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>cream-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          
+          <execution>
+            <id>install-delegation-skeleton</id>
+            <phase>install</phase>
+            <goals><goal>install-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/ce-delegation-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>delegation-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>install-es-skeleton</id>
+            <phase>install</phase>
+            <goals><goal>install-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-es-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>es-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
             </configuration>
           </execution>
 
@@ -361,8 +421,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.glite.ce.commonj</groupId>
-      <artifactId>glite-ce-common-java</artifactId>
+      <groupId>org.glite.ce</groupId>
+      <artifactId>cream-common</artifactId>
       <version>${common.java.version}</version>
       <scope>compile</scope>
     </dependency>
