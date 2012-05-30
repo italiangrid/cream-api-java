@@ -62,18 +62,12 @@ final class CommandWorker extends Thread {
     public void terminate() {
         logger.info("terminate invoked for " + getName());
         exit = true;
-        logger.info(getName() + " terminated!");
     }
 
     public void run() {
         Command command = null;
 
         do {
-            if (!executor.getCommandQueue().isOpen()) {
-                logger.warn(getName() + ": the queue is closed -> exit");
-                return;
-            }
-
             logger.debug(getName() + " waiting for a task");
             try {
                 command = executor.getCommandQueue().take();
@@ -115,6 +109,6 @@ final class CommandWorker extends Thread {
             }
         } while (!exit && !isInterrupted());
 
-        logger.debug(getName() + " terminating");
+        logger.info(getName() + " terminated!");
     }
 }
