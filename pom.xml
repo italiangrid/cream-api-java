@@ -428,13 +428,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.glite.security</groupId>
-      <artifactId>trustmanager</artifactId>
-      <version>${trustman.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15</artifactId>
       <version>${bcprov.version}</version>
