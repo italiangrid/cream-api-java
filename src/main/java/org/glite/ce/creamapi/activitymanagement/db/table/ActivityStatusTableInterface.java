@@ -46,7 +46,7 @@ public interface ActivityStatusTableInterface {
     public long executeInsert(String activityId, ActivityStatus activityStatus, Connection connection) throws SQLException;  
     public List<ActivityStatus> executeSelect(String activityId, String userId, Connection connection) throws SQLException;
     public void executeUpdate(ActivityStatus activityStatus, Connection connection) throws SQLException;
-    public ListActivitiesResult executeListActivities(XMLGregorianCalendar fromDate, XMLGregorianCalendar toDate, List<StatusName> statusList, List<StatusAttributeName> statusAttributeNameList, int limit, String userId,  Connection connection) throws SQLException;
+    public ListActivitiesResult executeListActivities(XMLGregorianCalendar fromDate, XMLGregorianCalendar toDate, List<ActivityStatus> statusList, int limit, String userId,  Connection connection) throws SQLException;
     public String executeRetrieveOlderActivityId(List<StatusName> statusList, String userId, Connection connection) throws SQLException;
     public List<String> executeListActivitiesForStatus(List<StatusName> statusList, String userId, int dateValue, Connection connection) throws SQLException;
 }

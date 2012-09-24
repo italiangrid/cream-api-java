@@ -43,7 +43,7 @@ public interface ActivityDBInterface {
 
     public void insertActivityStatus(String activityId, ActivityStatus activityStatus) throws DatabaseException, IllegalArgumentException;
 
-    public ListActivitiesResult listActivities(XMLGregorianCalendar fromDate, XMLGregorianCalendar toDate, List<StatusName> statusList, List<StatusAttributeName> statusAttributeList, int limit, String userId) throws DatabaseException, IllegalArgumentException; 
+    public ListActivitiesResult listActivities(XMLGregorianCalendar fromDate, XMLGregorianCalendar toDate, List<ActivityStatus> statusList, int limit, String userId) throws DatabaseException, IllegalArgumentException; 
 
     public void updateActivity(Activity activity) throws DatabaseException, IllegalArgumentException;
     
