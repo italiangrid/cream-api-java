@@ -26,7 +26,6 @@ import org.glite.ce.commonj.db.DatabaseException;
 import org.glite.ce.creamapi.activitymanagement.Activity;
 import org.glite.ce.creamapi.activitymanagement.ActivityCommand;
 import org.glite.ce.creamapi.activitymanagement.ActivityStatus;
-import org.glite.ce.creamapi.activitymanagement.ActivityStatus.StatusAttributeName;
 import org.glite.ce.creamapi.activitymanagement.ActivityStatus.StatusName;
 import org.glite.ce.creamapi.activitymanagement.ListActivitiesResult;
 
