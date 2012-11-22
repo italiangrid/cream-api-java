@@ -87,9 +87,9 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.creation</packageName>
-              <wsdlFile>${wsdls.path}/es/CreationService.wsdl</wsdlFile>
+              <wsdlFile>${wsdls.path}/es/ActivityCreationService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
-              <serviceName>CreationService</serviceName>
+              <serviceName>ActivityCreationService</serviceName>
               <namespaceURIs>
                 <namespaceURI>
                   <uri>http://www.eu-emi.eu/es/2010/12/adl</uri>
@@ -206,32 +206,20 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.delegation</packageName>
-              <wsdlFile>${wsdls.path}/es/DelegationService.wsdl</wsdlFile>
+              <wsdlFile>${wsdls.path}/es/delegation-2.0.0-2.1.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>DelegationService</serviceName>
               <namespaceURIs>
                 <namespaceURI>
-                  <uri>http://www.eu-emi.eu/es/2010/12/delegation</uri>
+                  <uri>http://www.gridsite.org/namespaces/delegation-2</uri>
                   <packageName>org.glite.ce.creamapi.ws.es.delegation</packageName>
-                </namespaceURI>
-                <namespaceURI>
-                  <uri>http://www.eu-emi.eu/es/2010/12/delegation/types</uri>
-                  <packageName>org.glite.ce.creamapi.ws.es.delegation.types</packageName>
-                </namespaceURI>
-                <namespaceURI>
-                  <uri>http://www.eu-emi.eu/es/2010/12/types</uri>
-                  <packageName>org.glite.ce.creamapi.ws.es.delegation.types</packageName>
-                </namespaceURI>
-                <namespaceURI>
-                  <uri>http://schemas.ogf.org/glue/2009/03/spec_2.0_r1</uri>
-                  <packageName>org.glite.ce.creamapi.ws.es.glue</packageName>
                 </namespaceURI>
               </namespaceURIs>
               <syncMode>sync</syncMode>
               <generateServerSide>true</generateServerSide>
               <generateServicesXml>true</generateServicesXml>
               <generateServerSideInterface>true</generateServerSideInterface>
-              <unwrap>false</unwrap>
+              <unwrap>true</unwrap>
               <generateAllClasses>true</generateAllClasses>
             </configuration>
           </execution>
