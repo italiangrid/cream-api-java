@@ -29,6 +29,7 @@ public class DelegationCommand extends Command {
     public static final String USER_CERTIFICATE    = "USER_CERTIFICATE";
     public static final String USER_DN             = "USER_DN";
     public static final String VOMS_ATTRIBUTES     = "VOMS_ATTRIBUTES";
+    public static final String USER_DN_RFC2253     = "USER_DN_RFC2253";
 
     public DelegationCommand(String name) {
         super(name, DELEGATION_MANAGEMENT);
