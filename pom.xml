@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.glite.ce</groupId>
+    <groupId>org.glite</groupId>
     <artifactId>cream-parent</artifactId>
-    <version>1.15.1</version>
+    <version>1.0.0</version>
   </parent>
 
   <groupId>org.glite.ce</groupId>
   <artifactId>cream-api-java</artifactId>
-  <version>${creamapi.version}</version>
+  <version>1.16.1</version>
   <packaging>jar</packaging>
 
   <build>
@@ -29,7 +29,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.cream2</packageName>
-              <wsdlFile>${wsdls.path}/org.glite.ce-cream2_service.wsdl</wsdlFile>
+              <wsdlFile>${cream.wsdl.url}/org.glite.ce-cream2_service.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>CREAM</serviceName>
               <namespaceURIs>
@@ -62,7 +62,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.security.delegation</packageName>
-              <wsdlFile>${wsdls.path}/www.gridsite.org-delegation-2.0.0.wsdl</wsdlFile>
+              <wsdlFile>${cream.wsdl.url}/www.gridsite.org-delegation-2.0.0.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>DelegationService</serviceName>
               <namespaceURIs>
@@ -87,7 +87,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.creation</packageName>
-              <wsdlFile>${wsdls.path}/es/ActivityCreationService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ActivityCreationService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>ActivityCreationService</serviceName>
               <namespaceURIs>
@@ -128,7 +128,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.activityinfo</packageName>
-              <wsdlFile>${wsdls.path}/es/ActivityInfoService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ActivityInfoService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>ActivityInfoService</serviceName>
               <namespaceURIs>
@@ -165,7 +165,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.activitymanagement</packageName>
-              <wsdlFile>${wsdls.path}/es/ActivityManagementService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ActivityManagementService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>ActivityManagementService</serviceName>
               <namespaceURIs>
@@ -206,7 +206,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.delegation</packageName>
-              <wsdlFile>${wsdls.path}/es/delegation-2.0.0-2.1.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/delegation-2.0.0-2.1.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>DelegationService</serviceName>
               <namespaceURIs>
@@ -231,7 +231,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.resourceinfo</packageName>
-              <wsdlFile>${wsdls.path}/es/ResourceInfoService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ResourceInfoService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>ResourceInfoService</serviceName>
               <namespaceURIs>
@@ -394,6 +394,60 @@
         </executions>
       </plugin>
 
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+        
+          <execution>
+            <id>deploy-cream-skeleton</id>
+            <phase>deploy</phase>
+            <goals><goal>deploy-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>cream-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+              <repositoryId>igi.website</repositoryId>
+              <url>${igi.repo.url}</url>
+            </configuration>
+          </execution>
+          
+          <execution>
+            <id>deploy-delegation-skeleton</id>
+            <phase>deploy</phase>
+            <goals><goal>deploy-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/ce-delegation-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>delegation-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+              <repositoryId>igi.website</repositoryId>
+              <url>${igi.repo.url}</url>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>deploy-es-skeleton</id>
+            <phase>deploy</phase>
+            <goals><goal>deploy-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-es-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>es-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+              <repositoryId>igi.website</repositoryId>
+              <url>${igi.repo.url}</url>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
     </plugins>
 
   </build>
@@ -404,72 +458,51 @@
     <dependency>
       <groupId>org.glite.jdl</groupId>
       <artifactId>jdl-api-java</artifactId>
-      <version>${jdlapij.version}</version>
+      <version>3.3.1</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.glite.ce</groupId>
       <artifactId>cream-common</artifactId>
-      <version>${common.java.version}</version>
+      <version>1.16.1</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15</artifactId>
-      <version>${bcprov.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2</artifactId>
-      <version>${axis2.version}</version>
-      <scope>compile</scope>
     </dependency>
     
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
-      <version>${axiom.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
-      <version>${wsdl4j.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.condor</groupId>
       <artifactId>classad</artifactId>
-      <version>${classad.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>emi-infn-repo</id>
-      <url>http://devel12.cnaf.infn.it:7444/pub/emi/packaging/maven</url>
-    </repository>
-  </repositories>
 
 </project>
