@@ -25,8 +25,8 @@
 package org.glite.ce.creamapi.activitymanagement.wrapper.activitymanagement.types;
 
 public enum NotifyMessageType {
-    CLIENT_DATAPULL_DONE("CLIENT-DATAPULL-DONE"),
-    CLIENT_DATAPUSH_DONE("CLIENT-DATAPUSH-DONE");
+    CLIENT_DATAPULL_DONE("client-datapull-done"),
+    CLIENT_DATAPUSH_DONE("client-datapush-done");
     private final String value;
 
     NotifyMessageType(String v) {
@@ -45,6 +45,5 @@ public enum NotifyMessageType {
         }
         throw new IllegalArgumentException(v);
     }
-
 }
 

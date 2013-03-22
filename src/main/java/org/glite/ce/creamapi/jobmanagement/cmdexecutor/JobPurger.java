@@ -15,27 +15,26 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
- 
+
 package org.glite.ce.creamapi.jobmanagement.cmdexecutor;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.glite.ce.creamapi.cmdmanagement.Command;
 import org.glite.ce.creamapi.jobmanagement.JobStatus;
 
-public class JobPurger extends TimerTask {
+public class JobPurger extends Thread {
     private static Logger logger = Logger.getLogger(JobPurger.class.getName());
     private AbstractJobExecutor executor = null;
     private String policy = null;
     private JOB_STATUS jobStatus;
     private Calendar date;
-
+    private int rate = 300; // 300 minutes
+    private boolean terminate = false;
 
     public static enum JOB_STATUS {
         ABORTED("ABORTED", JobStatus.ABORTED),
@@ -59,26 +58,29 @@ public class JobPurger extends TimerTask {
         public String getName() {
             return name;
         }
-        
+
         public String toString() {
             return name;
         }
     }
 
-    public JobPurger(AbstractJobExecutor executor, String policy) {
+    public JobPurger(AbstractJobExecutor executor, String policy, int rate) {
         super();
         this.executor = executor;
         this.policy = policy;
+        this.rate = rate;
+
+        start();
     }
 
     public String getPolicy() {
         return policy;
     }
-    
+
     public void setPolicy(String policy) {
         this.policy = policy;
     }
-  
+
     private Calendar parseDate(String date) throws IllegalArgumentException {
         if (date == null) {
             throw new IllegalArgumentException("date not specified!");
@@ -148,52 +150,81 @@ public class JobPurger extends TimerTask {
     }
 
     public void run() {
-        if(policy == null) {
+        if (policy == null) {
+            logger.error("policy not defined!");
             return;
         }
-        
-        StringTokenizer st = new StringTokenizer(policy, ";");
-        String token = null;
-        while(st.hasMoreTokens()) {
-            token = st.nextToken().trim();
-            if(token == null) {
-                continue;
-            }
-           
-            try {
-                parsePolicy(token);
-            } catch(Throwable e) {
-                logger.error("policy parsing error: " + e.getMessage());
-                continue;
-            }
- 
-            try {
-                int[] purgeCompatibleStatus = new int[] { jobStatus.getId() };
 
-                List<String> jobIdList = executor.getJobDB().retrieveJobId(null, null, purgeCompatibleStatus, null, date);
+        logger.info("starting: policy=[" + policy + "]; rate=" + rate + " minutes");
 
-                logger.info("purging " + jobIdList.size() + " jobs with status " + jobStatus.getName() + " <= " + date.getTime());
-                
-                for(String jobId : jobIdList) {
-                    Command purgeCmd = new Command(JobCommandConstant.JOB_PURGE, JobCommandConstant.JOB_MANAGEMENT);
-                    purgeCmd.setUserId("ADMIN");
-                    purgeCmd.setDescription("Cancelled by CREAM's job purger");
-                    purgeCmd.setAsynchronous(true);
-                    purgeCmd.setCommandGroupId(jobId);
-                    purgeCmd.addParameter("JOB_ID", jobId);
-                    purgeCmd.addParameter("IS_ADMIN", Boolean.toString(true));
-                    purgeCmd.setPriorityLevel(Command.LOW_PRIORITY);
+        while (!terminate) {
+            StringTokenizer st = new StringTokenizer(policy, ";");
+            String token = null;
 
-                    executor.getCommandManager().execute(purgeCmd);
+            while (st.hasMoreTokens() && !terminate) {
+                token = st.nextToken().trim();
+                if (token == null) {
+                    continue;
                 }
-            } catch (Throwable t) {
-                logger.error(t.getMessage());
-            }    
+
+                try {
+                    parsePolicy(token);
+                } catch (Throwable e) {
+                    logger.error("policy parsing error: " + e.getMessage());
+                    continue;
+                }
+
+                try {
+                    int[] purgeCompatibleStatus = new int[] { jobStatus.getId() };
+
+                    List<String> jobIdList = executor.getJobDB().retrieveJobId(null, null, purgeCompatibleStatus, null, date);
+
+                    logger.info("purging " + jobIdList.size() + " jobs with status " + jobStatus.getName() + " <= " + date.getTime());
+
+                    for (String jobId : jobIdList) {
+                        if (terminate) {
+                            break;
+                        }
+
+                        Command purgeCmd = new Command(JobCommandConstant.JOB_PURGE, JobCommandConstant.JOB_MANAGEMENT);
+                        purgeCmd.setUserId("ADMIN");
+                        purgeCmd.setDescription("Cancelled by CREAM's job purger");
+                        purgeCmd.setAsynchronous(false);
+                        purgeCmd.setCommandGroupId(jobId);
+                        purgeCmd.addParameter("JOB_ID", jobId);
+                        purgeCmd.addParameter("IS_ADMIN", Boolean.toString(true));
+                        purgeCmd.setPriorityLevel(Command.LOW_PRIORITY);
+
+                        executor.execute(purgeCmd);
+                    }
+                } catch (Throwable t) {
+                    logger.error(t.getMessage());
+                }
+            }
+
+            synchronized (this) {
+                try {
+                    logger.debug("waiting " + rate + " minutes...");
+                    wait(rate * 60000);
+                    logger.debug("waiting " + rate + " minutes... done");
+                } catch (InterruptedException e) {
+                    terminate = true;
+                }
+            }
         }
+
+        logger.info("exit");
     }
-    
-//    public static void main(String[] args) {
-//        JobPurger jc = new JobPurger(null, "DONE-OK=10 days; ABORTED = 2 years;DONE-FAILED=1months");
-//        jc.run();
-//    }
+
+    public synchronized void terminate() {
+        logger.info("teminate invoked!");
+
+        terminate = true;
+
+        synchronized (this) {
+            notifyAll();
+        }
+
+        logger.info("teminated!");
+    }
 }

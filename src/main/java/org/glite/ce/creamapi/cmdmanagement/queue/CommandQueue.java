@@ -113,7 +113,7 @@ public class CommandQueue implements CommandQueueInterface {
                     if (isShared) {
                         msTimeout = getSize() == 0L && commandToBeEnqueued2L.size() == 0 ? emptyQueueTimeout : notEmptyQueueTimeout;
 
-                        logger.info("[queue=" + QUEUE_TABLE + "]: waiting " + msTimeout + " msec...");
+                        logger.debug("[queue=" + QUEUE_TABLE + "]: waiting " + msTimeout + " msec...");
                         
                         synchronized (lock) {
                             lock.wait(msTimeout);
@@ -128,11 +128,11 @@ public class CommandQueue implements CommandQueueInterface {
                                 lock.wait(msTimeout);
                             }
                         } else {
-                            logger.info("[queue=" + QUEUE_TABLE + "]: waiting " + msTimeout + " msec...");
+                            logger.debug("[queue=" + QUEUE_TABLE + "]: waiting " + msTimeout + " msec...");
                             try {
                                 Thread.sleep(msTimeout);
                             } catch (InterruptedException e) {
-                               logger.error("[queue=" + QUEUE_TABLE + "] error: " + e.getMessage());
+                                logger.error("[queue=" + QUEUE_TABLE + "] error: " + e.getMessage());
                             }       
                         }
                     }
@@ -180,7 +180,7 @@ public class CommandQueue implements CommandQueueInterface {
     private final Set<String> excludedCommandGroupIdSet = new ConcurrentSkipListSet<String>();
     private final Object lock = new Object();
     private final Object queueLock = new Object();
-    private final long emptyQueueTimeout = 5000L;
+    private final long emptyQueueTimeout = 10000L;
     private long notEmptyQueueTimeout = 1000L;
     private Calendar lastThroughputUpdate = null;
     private BlockingQueue<Command> queue;

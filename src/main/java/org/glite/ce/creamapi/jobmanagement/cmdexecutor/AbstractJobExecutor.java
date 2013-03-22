@@ -103,6 +103,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
     private JobDBInterface jobDB;
     private LeaseManager leaseManager;
     private JobSubmissionManager jobSubmissionManager;
+    private JobPurger jobPurger = null;
     private Socket socket = null;
     private ObjectOutputStream oos = null;
     
@@ -159,7 +160,11 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             } catch (IOException e1) {
             }
         }
-    
+
+        if (jobPurger != null) {
+            jobPurger.terminate();
+        }
+
         timer.cancel();
         timer.purge();
         timer = null;
@@ -593,24 +598,26 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                 throw new CommandException("ACCEPT_NEW_JOBS value not valid!");
             }
 
-//        } else if (JobCommandConstant.COPY_NEW_PROXY_TO_SANDBOX.equals(command.getName())) {
-//            logger.debug("Calling copyNewProxyToSandbox.");
-//            copyProxyToSandbox(command);
-
         } else if (JobCommandConstant.PROXY_RENEW.equals(command.getName())) {
             logger.debug("Calling updateProxyToSandbox.");
-            
+
             String delegId = command.getParameterAsString("DELEGATION_PROXY_ID");
-            if (delegId == null) {
+            if (delegId == null) {               
                 throw new CommandException("parameter \"DELEGATION_PROXY_ID\" not defined!");
+            }
+
+            String delegProxyInfo = command.getParameterAsString("DELEGATION_PROXY_INFO");
+            if (delegProxyInfo == null) {               
+                throw new CommandException("parameter \"DELEGATION_PROXY_INFO\" not defined!");
             }
 
             Calendar now = Calendar.getInstance();
             int[] statusType = new int[] {JobStatus.REGISTERED, JobStatus.HELD, JobStatus.IDLE, JobStatus.PENDING, JobStatus.REALLY_RUNNING, JobStatus.RUNNING};
-            
+
             JobCommand jobCmd = new JobCommand();
             jobCmd.setCreationTime(command.getCreationTime());
-            jobCmd.setDescription(command.getDescription());
+            //jobCmd.setDescription(command.getDescription());
+            jobCmd.setDescription(delegProxyInfo);
             jobCmd.setStartSchedulingTime(command.getStartProcessingTime());
             jobCmd.setStartProcessingTime(now);
             jobCmd.setExecutionCompletedTime(now);
@@ -618,40 +625,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             jobCmd.setStatus(JobCommand.SUCCESSFULL);
             jobCmd.setCommandExecutorName(getName());
             jobCmd.setUserId(userId);
-            
-            String delegProxyInfo = command.getParameterAsString("DELEGATION_PROXY_INFO");
-            if (JobCommandConstant.PROXY_RENEW.equals(command.getName()) && delegProxyInfo == null) {                
-                jobCmd.setFailureReason("parameter \"DELEGATION_PROXY_INFO\" not defined!");
-                insertJobCommand(jobCmd, delegId, statusType);
 
-                throw new CommandException("parameter \"DELEGATION_PROXY_INFO\" not defined!");
-            }
-
-//            try {
-//                copyProxyToSandbox(command);
-//            } catch(CommandException ex) {
-//                jobCmd.setFailureReason(ex.getMessage());
-//                insertJobCommand(jobCmd, delegId, statusType);
-//                
-//                throw ex;
-//            }
-
-            try {
-                jobDB.updateDelegationProxyInfo(delegId, delegProxyInfo, userId);                
-                logger.debug("updateProxyToSandbox local user " + command.getParameterAsString("LOCAL_USER") + ":" + command.getParameterAsString("LOCAL_USER_GROUP") + " delegId = " + delegId);
-            } catch (DatabaseException de) {
-                logger.error("updateDelegationProxyInfo error: " + de.getMessage());
-                jobCmd.setFailureReason(de.getMessage());
-                throw new CommandException(de.getMessage());         
-            } catch (IllegalArgumentException ie) {
-                jobCmd.setFailureReason(ie.getMessage());
-                throw new CommandException(ie.getMessage());
-            } finally {
-                insertJobCommand(jobCmd, delegId, statusType);
-            }
-//        } else if (JobCommandConstant.DELETE_PROXY_FROM_SANDBOX.equals(command.getName())) {
-//            logger.debug("Calling deleteProxyFromSandbox.");
-//            deleteProxyFromSandbox(command);
+            insertJobCommand(jobCmd, delegId, statusType);
 
         } else if (JobCommandConstant.JOB_REGISTER.equals(command.getName())) {
             logger.debug("Calling jobRegister.");
@@ -1008,235 +983,6 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
         return null;
     }
     
-//    private String copyProxyToSandbox(Command command) throws CommandException {
-//        logger.debug("Begin copyNewProxyToSandbox");
-//
-//        if (command == null) {
-//            throw new CommandException("command not defined!");
-//        }
-//
-//        String cream_sandbox_dir = getParameterValueAsString("CREAM_SANDBOX_DIR");
-//        if (cream_sandbox_dir == null) {
-//            throw new CommandException("parameter \"CREAM_SANDBOX_DIR\" not defined!");
-//        }
-//        
-//        String localUserId = command.getParameterAsString("LOCAL_USER");
-//        if (localUserId == null) {
-//            throw new CommandException("parameter \"LOCAL_USER\" not defined!");
-//        }
-//        
-//        String delegId = command.getParameterAsString("DELEGATION_PROXY_ID");
-//        if (delegId == null) {
-//            throw new CommandException("parameter \"DELEGATION_PROXY_ID\" not defined!");
-//        }
-//        
-//        String delegSuffix = command.getParameterAsString("DELEGATION_PROXY_SUFFIX");
-//        if (delegSuffix == null) {
-//            delegSuffix = delegationSuffix;
-//        }
-//        
-//        String delegProxy = command.getParameterAsString("DELEGATION_PROXY");
-//        if (delegProxy == null) {
-//            throw new CommandException("parameter \"DELEGATION_PROXY\" not defined!");
-//        }
-//
-//        String delegPath = command.getParameterAsString("DELEGATION_PROXY_PATH");
-//        if (delegPath == null) {            
-//            String localUserGroup = command.getParameterAsString("LOCAL_USER_GROUP");
-//            
-//            if (localUserGroup == null) {
-//                throw new CommandException("parameter \"LOCAL_USER_GROUP\" not defined!");
-//            }
-//            
-//            delegPath = cream_sandbox_dir + File.separator + localUserGroup + File.separator + command.getUserId() + "_" + localUserId + File.separator + "proxy";
-//        }
-//
-//        if(!containsParameterKey("CREAM_COPY_PROXY_TO_SANDBOX_BIN_PATH")) {
-//            throw new CommandException("CREAM_COPY_PROXY_TO_SANDBOX_BIN_PATH not defined!");
-//        }
-//
-//        String delegIdNormalized = normalize(delegId + delegSuffix);
-//
-//        logger.debug("Begin copyNewProxyToSandbox for local user " + localUserId + " delegId = " + delegId + " delegPath = " + delegPath);
-//        
-//        String[] cmd = new String[] { "sudo", "-S", "-n", "-u", localUserId, getParameterValueAsString("CREAM_COPY_PROXY_TO_SANDBOX_BIN_PATH"), delegIdNormalized, delegPath };
-//
-//        Process proc = null;
-//        BufferedOutputStream os = null;
-//        
-//        try {
-//            proc = Runtime.getRuntime().exec(cmd);
-//            os = new BufferedOutputStream(proc.getOutputStream());
-//            os.write(delegProxy.getBytes());
-//            os.flush();
-//            os.close();
-//            os = null;
-//        } catch (IOException e) {
-//            logger.error("IOException caught: " + e.getMessage());
-//            if (proc != null) {
-//                proc.destroy();
-//            }
-//            throw new CommandException(e.getMessage());
-//        } catch (Throwable e) {
-//            if (proc != null) {
-//                proc.destroy();
-//            }
-//        } finally {
-//            if (proc != null) {
-//                try {
-//                    proc.waitFor();
-//                } catch (InterruptedException ioe) {
-//                    throw new CommandException(ioe.getMessage());
-//                }
-//                
-//                StringBuffer errorMessage = null;
-//
-//                if (proc.exitValue() != 0) {
-//                    logger.error("proc.exitValue() != 0");
-//                    BufferedReader readErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-//
-//                    errorMessage = new StringBuffer();
-//                    String inputLine = null; 
-//
-//                    try {
-//                        while ((inputLine = readErr.readLine()) != null) {
-//                            errorMessage.append(inputLine);
-//                        }
-//                    } catch (IOException ioe) {
-//                        logger.error(ioe.getMessage());
-//                    } finally {
-//                        try {
-//                            readErr.close();
-//                        } catch (IOException e) {
-//                        }                        
-//                    }
-//
-//                    if (errorMessage.length() > 0) {
-//                        errorMessage.append("\n");
-//                    }
-//                }
-//
-//                try {
-//                    proc.getInputStream().close();
-//                } catch (IOException ioe) {}
-//                
-//                try {
-//                    proc.getErrorStream().close();
-//                } catch (IOException ioe) {}
-//                
-//                try {
-//                    proc.getOutputStream().close();
-//                } catch (IOException ioe) {}
-//                
-//                if(errorMessage != null && errorMessage.length() > 0) {
-//                    logger.error("copyNewProxyToSandbox error: " + errorMessage);
-//                    throw new CommandException(errorMessage.toString());
-//                }
-//            }
-//        }
-//
-//        logger.debug("End copyNewProxyToSandbox for local user " + localUserId + " delegId = " + delegId);
-//
-//        return delegPath + File.separator + delegIdNormalized;
-//    }
-
-//    private void deleteProxyFromSandbox(Command command) throws CommandException {
-//        if (command == null) {
-//            return;
-//        }
-//
-//        String userId = command.getUserId();
-//        if (userId == null) {
-//            throw new CommandException("userId not defined!");
-//        }
-//        
-//        String localUserId = command.getParameterAsString("LOCAL_USER");
-//        if (localUserId == null) {            
-//            throw new CommandException("parameter \"LOCAL_USER\" not defined!");
-//        }
-//        
-//        String localUserGroup = command.getParameterAsString("LOCAL_USER_GROUP");
-//        if (localUserGroup == null) {
-//            throw new CommandException("parameter \"LOCAL_USER_GROUP\" not defined!");
-//        }
-//        
-//        String delegId = command.getParameterAsString("DELEGATION_PROXY_ID");
-//        if (delegId == null) {
-//            throw new CommandException("parameter \"DELEGATION_PROXY_ID\" not defined!");
-//        }
-//
-//        String delegSuffix = command.getParameterAsString("DELEGATION_PROXY_SUFFIX");
-//        if (delegSuffix == null) {
-//            delegSuffix = delegationSuffix;
-//        }
-//
-//        logger.debug("Begin deleteProxyFromSandbox for local user " + localUserId + ":" + localUserGroup + " userId = " + userId + " delegId = " + delegId);
-//
-//        Process proc = null;
-//        String[] cmd = new String[] { "sudo", "-S", "-n", "-u", localUserId, getParameterValueAsString("CREAM_PURGE_PROXY_FROM_SANDBOX_BIN_PATH"), localUserGroup, userId + "_" + localUserId, normalize(delegId + delegationSuffix) };
-//
-//        try {
-//            proc = Runtime.getRuntime().exec(cmd);
-//        } catch (Throwable e) {
-//            if (proc != null) {
-//                proc.destroy();
-//            }
-//        } finally {
-//            if (proc != null) {
-//                try {
-//                    proc.waitFor();
-//                } catch (InterruptedException ioe) {
-//                    throw new CommandException(ioe.getMessage());
-//                }
-//
-//                StringBuffer errorMessage = null;
-//
-//                if (proc.exitValue() != 0) {
-//                    BufferedReader readErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-//
-//                    errorMessage = new StringBuffer();
-//                    String inputLine = null; 
-//
-//                    try {
-//                        while ((inputLine = readErr.readLine()) != null) {
-//                            errorMessage.append(inputLine);
-//                        }
-//                    } catch (IOException ioe) {
-//                        logger.error(ioe.getMessage());
-//                    } finally {
-//                        try {
-//                            readErr.close();
-//                        } catch (IOException e) {
-//                        }                        
-//                    }
-//
-//                    if (errorMessage.length() > 0) {
-//                        errorMessage.append("\n");
-//                    }
-//                }
-//
-//                try {
-//                    proc.getInputStream().close();
-//                } catch (IOException ioe) {}
-//
-//                try {
-//                    proc.getErrorStream().close();
-//                } catch (IOException ioe) {}
-//
-//                try {
-//                    proc.getOutputStream().close();
-//                } catch (IOException ioe) {}
-//
-//                if(errorMessage != null && errorMessage.length() > 0) {
-//                    logger.error("deleteProxyFromSandbox error: " + errorMessage);
-//                    throw new CommandException(errorMessage.toString());
-//                }
-//            }
-//        }
-//
-//        logger.debug("End deleteProxyFromSandbox for local user " + localUserId + ":" + localUserGroup + " delegId = " + delegId);
-//    }
-
     private void jobStart(Command command) throws CommandException {
         if (command == null) {
             throw new CommandException("command not defined!");
@@ -1250,59 +996,48 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
         if (userDN == null) {
             throw new CommandException("parameter \"USER_DN\" not defined!");
         }
-        
-//        if (delegationManager == null) {
-//            throw new CommandException("DelegationManager not instantiated!");
-//        }
-               
+                       
         Job job = (Job)command.getParameter("JOB");
-        //String delegationProxyCertPath = job.getDelegationProxyCertPath();
-        //JobStatus status = null;
         
         logger.debug("Begin jobStart for job " + job.getId());
 
-//        try {
-//            Delegation delegation = delegationManager.getDelegation(job.getDelegationProxyId(), userDN, job.getLocalUser());
-//            
-//            if (delegation == null) {
-//                throw new CommandException("delegation " + job.getDelegationProxyId() + " for localUser " + job.getLocalUser() + " (DN=" + userDN + ") not found!");
-//            }
-//
-//            command.addParameter("DELEGATION_PROXY", delegation.getProxy());
-//            command.addParameter("DELEGATION_PROXY_ID", delegation.getId());
-//            command.addParameter("DELEGATION_PROXY_SUFFIX", delegationSuffixTmp);
-//            command.addParameter("LOCAL_USER", job.getLocalUser());
-//            command.addParameter("LOCAL_USER_GROUP", job.getExtraAttribute("LOCAL_USER_GROUP"));
-//            
-//            job.setDelegationProxyCertPath(copyProxyToSandbox(command));
-//            logger.debug("pending status for job " + job.getId());
-//
-//            status = new JobStatus(JobStatus.PENDING, job.getId());
-//            doOnJobStatusChanged(status, job);
-//            
-//            logger.debug("pending status for job " + job.getId() + " done");
-//        } catch (CommandException e) {
-//            logger.error(e.getMessage());
-//            throw e;
-//        } catch (Throwable t) {
-//            logger.error(t.getMessage());
-//            throw new CommandException(t.getMessage());
-//        }
-        
         JobStatus status = new JobStatus(JobStatus.PENDING, job.getId());
         try {
             doOnJobStatusChanged(status, job);
         } catch (Throwable t) {
           throw new CommandException(t.getMessage());
         } 
-        
+
         Calendar now = Calendar.getInstance();
         CommandResult cr = null;
-        try {
-            cr = submit(job);
-        } catch (CommandException e) {
+        String failureReason = null;
+        
+        for (int i=1; i<4 && cr == null; i++) {
+            failureReason = null;
+
+            try {
+                cr = submit(job);
+            } catch (CommandException ce) {
+                failureReason = ce.getMessage();
+                logger.warn("submission to BLAH failed [jobId=" + job.getId() + "; reason=" + failureReason + "; retry count=" + i + "/3]");
+
+                synchronized(now) {
+                    try {
+                        logger.debug("sleeping 10 sec...");
+                        now.wait(10000);
+                        logger.debug("sleeping 10 sec... done");
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        
+        if (cr == null) {
             status = new JobStatus(JobStatus.ABORTED, job.getId());
-            status.setFailureReason(e.getMessage());
+            status.setDescription("submission to BLAH failed [retry count=3]");
+            status.setFailureReason(failureReason);
 
             try {
                 doOnJobStatusChanged(status, job);
@@ -1312,10 +1047,9 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
             setLeaseExpired(job);
 
-            throw e;
+            throw new CommandException("submission to BLAH failed [retry count=3]" + (failureReason != null ? ": " + failureReason : ""));
         }
 
-        //job.setDelegationProxyCertPath(delegationProxyCertPath);
         job.setLRMSJobId(cr.getParameterAsString("LRMS_JOB_ID"));
         job.setLRMSAbsLayerJobId(cr.getParameterAsString("LRMS_ABS_JOB_ID"));
 
@@ -1617,8 +1351,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                                 if (file.startsWith("gsiftp://localhost")) {
                                     if (file.equals("gsiftp://localhost")) {
                                         outputFile = job.getOutputFiles().get(i);
-                                    } else if (file.compareTo("gsiftp://localhost") > 0) {
-                                        outputFile = file.substring("gsiftp://localhost".length());                                
+                                    } else {
+                                        outputFile = file.substring("gsiftp://localhost".length()+1);
                                     }
 
                                     index = outputFile.lastIndexOf("/");
@@ -1710,7 +1444,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                             for (String file : job.getOutputSandboxDestURI()) {
                                 outputFile = job.getOutputFiles().get(i++);
 
-                                if (file.compareTo("gsiftp://localhost") >= 0) {
+                                if (file.startsWith("gsiftp://localhost")) {
                                     index = outputFile.lastIndexOf("/");
                                     outputFile = index > 0? outputFile.substring(index + 1): outputFile;
 
@@ -1719,7 +1453,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                                     transferOutput.append(outputFile).append(",");
                                     transferOutputRemaps.append(outputFile).append("=").append(osbDir);
 
-                                    if (file.compareTo("gsiftp://localhost") > 0) {
+                                    if (file.length() > "gsiftp://localhost".length()) {
                                         outputFile = file.substring("gsiftp://localhost".length()+1);
                                         index = outputFile.lastIndexOf("/");
                                         outputFile = index > 0? file.substring(index + 1): outputFile;
@@ -1949,7 +1683,11 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             if (cmd.containsParameterKey("USER_DN")) {
                 job.addExtraAttribute("USER_DN", cmd.getParameterAsString("USER_DN").replaceAll("\\s+", "\\\\ "));
             }
-            
+
+            if (cmd.containsParameterKey("USER_DN_X500")) {
+                job.addExtraAttribute("USER_DN_X500", cmd.getParameterAsString("USER_DN_X500").replaceAll("\\s+", "\\\\ "));
+            }
+
             if (cmd.containsParameterKey("LOCAL_USER_GROUP")) {
                 job.addExtraAttribute("LOCAL_USER_GROUP", cmd.getParameterAsString("LOCAL_USER_GROUP"));
             }
@@ -2694,8 +2432,6 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
         logger.info("LeaseManager started [maxLeaseTime=" + maxLeaseTime + "; leaseExecutionRate=" + leaseExecutionRate + "]");
 
         if(containsParameterKey("JOB_PURGE_POLICY")) {
-            JobPurger jobPurger = new JobPurger(this, getParameterValueAsString("JOB_PURGE_POLICY"));
-
             int jobPurgeRate = JOB_PURGE_RATE_DEFAULT;
             if(containsParameterKey("JOB_PURGE_RATE")) {
                 try {
@@ -2704,7 +2440,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                     jobPurgeRate = JOB_PURGE_RATE_DEFAULT;
                 }
             }
-            timer.schedule(jobPurger, 60000, (jobPurgeRate * 60000)); // task executed every jobPurgeRate minutes
+
+            jobPurger = new JobPurger(this, getParameterValueAsString("JOB_PURGE_POLICY"), jobPurgeRate);
         }
 
         String disableSubmissionPolicy = getParameterValueAsString(JOB_SUBMISSION_MANAGER_ENABLE);
