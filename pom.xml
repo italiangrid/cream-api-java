@@ -219,7 +219,7 @@
               <generateServerSide>true</generateServerSide>
               <generateServicesXml>true</generateServicesXml>
               <generateServerSideInterface>true</generateServerSideInterface>
-              <unwrap>true</unwrap>
+              <unwrap>false</unwrap>
               <generateAllClasses>true</generateAllClasses>
             </configuration>
           </execution>
