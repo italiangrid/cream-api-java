@@ -483,16 +483,19 @@
                   <sources>
                     <source>
                       <location>${project.build.directory}/${project.artifactId}-${project.version}.jar</location>
-                      <destination>${project.artifactId}.jar</destination>
+                      <destination>glite-ce-cream-api-java.jar</destination>
                     </source>
                     <source>
                       <location>${project.build.directory}/ce-delegation-skeleton.jar</location>
+                      <destination>glite-ce-delegation-skeleton.jar</destination>
                     </source>
                     <source>
                       <location>${project.build.directory}/cream-es-skeleton.jar</location>
+                      <destination>glite-ce-cream-es-skeleton.jar</destination>
                     </source>
                     <source>
                       <location>${project.build.directory}/cream-skeleton.jar</location>
+                      <destination>glite-ce-cream-skeleton.jar</destination>
                     </source>
                   </sources>
                 </mapping>
