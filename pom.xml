@@ -9,6 +9,7 @@
 
   <properties>
     <rpm.release>1</rpm.release>
+    <rpm.pkgname>glite-ce-cream-api-java</rpm.pkgname>
   </properties>
   
   <parent>
@@ -459,63 +460,60 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rpm-maven-plugin</artifactId>
-        <version>2.1-alpha-2</version>
-        <executions>
-          <execution>
-            <id>cream-api-java</id>
-            <goals><goal>attached-rpm</goal></goals>
-            <configuration>
-              <name>glite-ce-cream-api-java</name>
-              <summary>Java libraries for the CREAM service</summary>
-              <description>Java libraries for the CREAM service</description>
-              <!-- changelogFile>CHANGELOG</changelogFile -->
-              <copyright>Apache Software License</copyright>
-              <release>${project.rpm.release}</release>
-              <group>System Environment/Libraries</group>
-              <mappings>
-                <mapping>
-                  <directory>/usr/share/java</directory>
-                  <directoryIncluded>false</directoryIncluded>
-                  <filemode>744</filemode>
-                  <sources>
-                    <source>
-                      <location>${project.build.directory}/${project.artifactId}-${project.version}.jar</location>
-                      <destination>glite-ce-cream-api-java.jar</destination>
-                    </source>
-                    <source>
-                      <location>${project.build.directory}/ce-delegation-skeleton.jar</location>
-                      <destination>glite-ce-delegation-skeleton.jar</destination>
-                    </source>
-                    <source>
-                      <location>${project.build.directory}/cream-es-skeleton.jar</location>
-                      <destination>glite-ce-cream-es-skeleton.jar</destination>
-                    </source>
-                    <source>
-                      <location>${project.build.directory}/cream-skeleton.jar</location>
-                      <destination>glite-ce-cream-skeleton.jar</destination>
-                    </source>
-                  </sources>
-                </mapping>
-              </mappings>
-              <requires>
-                <require>axis2</require>
-                <require>bouncycastle</require>
-                <require>jclassads</require>
-                <require>glite-ce-common-java</require>
-                <require>glite-jdl-api-java</require>
-              </requires>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins>
 
   </build>
 
+  <profiles>
+    <profile>
+      <id>rpmbuild</id>
+      <activation>
+        <property>
+          <name>rpm.repackaging</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <id>rpmbuild</id>
+                <phase>package</phase>
+                <goals><goal>run</goal></goals>
+                <configuration>
+                  <target>
+                    <mkdir dir="${project.build.directory}/rpmbuild/BUILD"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/RPMS"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/SOURCES"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/SPECS"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/SRPMS"/>
+                    <exec executable="/bin/tar">
+                      <arg line="--exclude .git --exclude target -zcf ${project.build.directory}/rpmbuild/SOURCES/${rpm.pkgname}.tar.gz ."/>
+                    </exec>
+                    <copy file="${project.basedir}/project/${rpm.pkgname}.spec.in" toFile="${project.build.directory}/rpmbuild/SPECS/${rpm.pkgname}.spec"/>
+                    <replace file="${project.build.directory}/rpmbuild/SPECS/${rpm.pkgname}.spec">
+                      <replacefilter token="@PKGNAME@" value="${rpm.pkgname}"/>
+                      <replacefilter token="@PKGVERSION@" value="${version}"/>
+                      <replacefilter token="@PKGRELEASE@" value="${rpm.release}"/>
+                      <replacefilter token="@MVNOPTS@" value="-Drpm.repackaging=false -DskipTests"/>
+                    </replace>
+                    <exec executable="/usr/bin/rpmbuild">
+                      <arg line="-ba --define '_topdir ${project.build.directory}/rpmbuild' ${project.build.directory}/rpmbuild/SPECS/${rpm.pkgname}.spec"/>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencies>
   
