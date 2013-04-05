@@ -52,6 +52,7 @@ public class Job implements Serializable, Externalizable {
     public static final String WMS_HOSTNAME = "WMS_HOSTNAME";
     public static final String OUTPUT_DATA = "OUTPUT_DATA";
     public static final String DS_UPLOAD_OUTPUT_FILE = "DS_UPLOAD_OUTPUT_FILE";
+    public static final String LB_ADDRESS = "LB_ADDRESS";
 
     private String creamURL = null;
     private String id = null;

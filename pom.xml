@@ -532,6 +532,16 @@
     </dependency>
 
     <dependency>
+      <groupId>org.glite.lb</groupId>
+      <artifactId>jobid-api-java</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glite.lb</groupId>
+      <artifactId>lb-client-java</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15</artifactId>
     </dependency>

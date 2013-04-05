@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URI;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,7 +63,7 @@ import org.glite.ce.creamapi.jobmanagement.command.JobIdFilterFailure;
 import org.glite.ce.creamapi.jobmanagement.command.JobIdFilterResult;
 import org.glite.ce.creamapi.jobmanagement.db.JobDBInterface;
 import org.glite.ce.creamapi.jobmanagement.jdl.JobFactory;
-
+import org.glite.ce.creamapi.jobmanagement.lb.LBLogger;
 
 public abstract class AbstractJobExecutor extends AbstractCommandExecutor implements JobStatusChangeListener {
     private final static Logger logger = Logger.getLogger(AbstractJobExecutor.class.getName());
@@ -138,6 +139,22 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             throw new CommandExecutorException(ioe.getMessage());
         } finally {
             dir = null;
+        }
+
+        String lbAddress = getParameterValueAsString("LB_DEFAULT_ADDRESS");
+        String lbILPrefix = getParameterValueAsString("LB_IL_PREFIX");
+
+        if (lbAddress == null) {
+            logger.warn("parameter \"LB_DEFAULT_ADDRESS\" not defined, LBLogger disabled");
+        } else {
+            try { 
+                URI lbdefault = new URI(lbAddress);
+                LBLogger.setDefaultLBURI(lbdefault);
+                LBLogger.setILPrefix(lbILPrefix);
+                LBLogger.getInstance();
+            } catch (Throwable t) {
+                logger.error("LBLogger initialization failed: " + t.getMessage(), t );
+            }
         }
     }
 
@@ -878,6 +895,14 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
                     jobCmd.setStatus(JobCommand.PROCESSING);
 
+                    if (LBLogger.isEnabled()) {
+                        try {
+                            LBLogger.getInstance().execute(j, command, LBLogger.START, null, null);
+                        } catch (Throwable t) {
+                            logger.warn("LBLogger.execute() failed: " + t.getMessage());
+                        }
+                    }
+
                     try {
                         if (JobCommandConstant.JOB_CANCEL.equals(command.getName())) {
                             if (j.getLastStatus() != null && j.getLastStatus().getType() == JobStatus.REGISTERED) {
@@ -932,11 +957,27 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
                             jobDB.updateJobCommand(jobCmd);
                         }
+
+                        if (LBLogger.isEnabled()) {
+                            try {
+                                LBLogger.getInstance().execute(j, command, LBLogger.OK, j.getLRMSAbsLayerJobId(), null);
+                            } catch (Throwable t) {
+                                logger.warn("LBLogger.execute() failed: " + t.getMessage());
+                            }
+                        }
                     } catch (CommandException ce) {
                         jobCmd.setStatus(JobCommand.ERROR);
                         jobCmd.setFailureReason(ce.getMessage());
 
                         jobDB.updateJobCommand(jobCmd);
+
+                        if (LBLogger.isEnabled()) {
+                            try {
+                                LBLogger.getInstance().execute(j, command, LBLogger.FAILED, null, ce);
+                            } catch (Throwable t) {
+                                logger.warn("LBLogger.execute() failed: " + t.getMessage());
+                            }
+                        }
                     }
                 }
 
@@ -1760,7 +1801,21 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
             jobCmd.setJobId(job.getId());
             jobCmd.setStatus(JobCommand.SUCCESSFULL);
-            
+           
+            if (LBLogger.isEnabled()) {
+                try {
+                    LBLogger.getInstance().register(job);
+                } catch (Throwable e) {
+                    logger.warn("LBLogger.register() failed: " + e.getMessage(),e );
+                }
+
+                try {
+                    LBLogger.getInstance().accept(job);
+                } catch (Throwable e) {
+                    logger.warn("LBLogger.accept() failed: " + e.getMessage(),e );
+                }
+            }
+
             try {
                 createJobSandboxDir(job, cmd.getParameterAsString("GSI_FTP_CREAM_URL"));
             } catch (Throwable e) {
@@ -1929,7 +1984,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             logger.warn("job " + status.getJobId() + " not found!");
             return false;
         }
-        
+      
         JobStatus lastStatus = job.getLastStatus();
 /*
         if (lastStatus == null) {
@@ -1958,6 +2013,14 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                     jobDB.updateStatus(status, null);
 
                     statusUpdated = true;
+
+                    if (LBLogger.isEnabled()) {
+                        try {
+                            LBLogger.getInstance().statusChanged(job, status, null, LBLogger.START);
+                        } catch (Exception e) {
+                            logger.warn("LBLogger.statusChanged failed: " + e.getMessage());
+                        }
+                    }
 
                     logger.info("JOB " + status.getJobId() + " STATUS UPDATED: " + status.getName());
 
@@ -2071,6 +2134,14 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
                 statusUpdated = true;
 
+                if (LBLogger.isEnabled()) {
+                    try {
+                        LBLogger.getInstance().statusChanged(job, status, null, LBLogger.START);
+                    } catch (Exception e) {
+                        logger.warn("LBLogger.statusChanged failed: " + e.getMessage());
+                    }
+                }
+
                 StringBuffer logInfo = new StringBuffer("JOB ");
                 logInfo.append(status.getJobId());
 
@@ -2125,6 +2196,14 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                 sendNotification(job);
             } catch (Throwable e) {
                 logger.error(e.getMessage());
+            }
+        }
+
+        if (LBLogger.isEnabled() && statusUpdated) {
+            try {
+                LBLogger.getInstance().statusChanged(job, status, lastStatus, LBLogger.OK);
+            } catch (Exception e) {
+                logger.warn("LBLogger.statusChanged failed: " + e.getMessage());
             }
         }
 
@@ -2361,7 +2440,9 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
         }
         
         this.jobDB = jobDB;
-        
+
+        LBLogger.setJobDB(jobDB);
+ 
         EventManagerFactory.addEventManager("JOB_STATUS_EVENT_MANAGER", new JobStatusEventManager(jobDB, 500));
         
         try {

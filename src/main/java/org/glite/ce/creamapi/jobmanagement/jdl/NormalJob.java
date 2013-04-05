@@ -313,6 +313,11 @@ public final class NormalJob {
             job.addExtraAttribute(Jdl.MW_VERSION, mwVersion);
         }
 
+        String lbAddress = getAttributeValue(jobAd, Jdl.LB_ADDRESS);
+        if (lbAddress != null) {
+            job.addVolatileProperty(Job.LB_ADDRESS, lbAddress);
+        }
+
         ArrayList<OutputDataRecord> outputData = getOutputData(jobAd, Jdl.OUTPUTDATA);
         if (outputData != null){
             job.addVolatileProperty(Job.OUTPUT_DATA, outputData);

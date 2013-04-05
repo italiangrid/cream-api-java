@@ -9,7 +9,8 @@ Group: System Environment/Libraries
 BuildArch: noarch
 BuildRequires: maven
 Requires: axis2, bouncycastle, jclassads
-Requires: glite-ce-common-java, glite-jdl-api-java, canl-java 
+Requires: glite-ce-common-java, glite-jdl-api-java
+Requires: glite-lb-client-java, canl-java 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv: yes
 Source: %{name}.tar.gz
