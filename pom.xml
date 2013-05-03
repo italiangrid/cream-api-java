@@ -525,8 +525,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.glite.ce.commonj</groupId>
-      <artifactId>glite-ce-common-java</artifactId>
+      <groupId>org.glite.ce</groupId>
+      <artifactId>cream-common</artifactId>
       <version>1.14.3</version>
       <scope>compile</scope>
     </dependency>
