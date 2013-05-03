@@ -1,0 +1,51 @@
+Summary: Java libraries for the CREAM service
+Name: @PKGNAME@
+Version: @PKGVERSION@
+Release: @PKGRELEASE@
+License: Apache Software License
+Vendor: EMI
+URL: http://glite.cern.ch/
+Group: System Environment/Libraries
+BuildArch: noarch
+BuildRequires: maven
+Requires: axis2, bouncycastle, jclassads
+Requires: glite-ce-common-java, glite-jdl-api-java
+Requires: emi-delegation-java, emi-trustmanager 
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+AutoReqProv: yes
+Source: %{name}.tar.gz
+
+%description
+Java libraries for the CREAM service
+
+%prep
+%setup -c -q
+
+%build
+mvn @MVNOPTS@ compile
+
+
+%install
+rm -rf %{buildroot}
+mkdir -p %{buildroot}
+mvn @MVNOPTS@ install
+mkdir -p %{buildroot}/usr/share/java
+cp %{_builddir}/%{name}-%{version}/target/cream-api-java-@PKGVERSION@.jar %{buildroot}/usr/share/java/glite-ce-cream-api-java.jar
+cp %{_builddir}/%{name}-%{version}/target/ce-delegation-skeleton.jar %{buildroot}/usr/share/java/glite-ce-delegation-skeleton.jar
+cp %{_builddir}/%{name}-%{version}/target/cream-es-skeleton.jar %{buildroot}/usr/share/java/glite-ce-cream-es-skeleton.jar
+cp %{_builddir}/%{name}-%{version}/target/cream-skeleton.jar %{buildroot}/usr/share/java/glite-ce-cream-skeleton.jar
+
+ 
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root)
+/usr/share/java/glite-ce-*.jar
+
+%changelog
+* Fri Aug 31 2012 CREAM group <cream-support@lists.infn.it> - @PKGVERSION@-@PKGRELEASE@
+- New major release
+
+
