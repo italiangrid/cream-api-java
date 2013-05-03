@@ -2,17 +2,28 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.glite.ce</groupId>
-    <artifactId>cream-parent</artifactId>
-    <version>1.15</version>
-  </parent>
-
-  <groupId>org.glite.ce.creamapi</groupId>
+  <groupId>org.glite.ce</groupId>
   <artifactId>cream-api-java</artifactId>
-  <version>${creamapi.version}</version>
+  <version>1.14.4</version>
   <packaging>jar</packaging>
 
+  <properties>
+    <rpm.release>1</rpm.release>
+    <rpm.pkgname>glite-ce-cream-api-java</rpm.pkgname>
+  </properties>
+  
+  <parent>
+    <groupId>org.glite</groupId>
+    <artifactId>cream-parent</artifactId>
+    <version>0.8.0</version>
+  </parent>
+
+  <scm>
+    <connection>scm:git:git://github.com/italiangrid/cream-api-java.git</connection>
+    <url>https://github.com/italiangrid/cream-api-java</url>
+    <developerConnection>scm:git:ssh://git@github.com:italiangrid/cream-api-java.git</developerConnection>
+  </scm>
+  
   <build>
   
     <plugins>
@@ -29,7 +40,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.cream2</packageName>
-              <wsdlFile>${wsdls.path}/org.glite.ce-cream2_service.wsdl</wsdlFile>
+              <wsdlFile>${cream.wsdl.url}/org.glite.ce-cream2_service.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>CREAM</serviceName>
               <namespaceURIs>
@@ -62,7 +73,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.security.delegation</packageName>
-              <wsdlFile>${wsdls.path}/www.gridsite.org-delegation-2.0.0.wsdl</wsdlFile>
+              <wsdlFile>${cream.wsdl.url}/www.gridsite.org-delegation-2.0.0.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>DelegationService</serviceName>
               <namespaceURIs>
@@ -87,9 +98,9 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.creation</packageName>
-              <wsdlFile>${wsdls.path}/es/CreationService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ActivityCreationService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
-              <serviceName>CreationService</serviceName>
+              <serviceName>ActivityCreationService</serviceName>
               <namespaceURIs>
                 <namespaceURI>
                   <uri>http://www.eu-emi.eu/es/2010/12/adl</uri>
@@ -106,6 +117,10 @@
                 <namespaceURI>
                   <uri>http://www.eu-emi.eu/es/2010/12/types</uri>
                   <packageName>org.glite.ce.creamapi.ws.es.creation.types</packageName>
+                </namespaceURI>
+                <namespaceURI>
+                  <uri>http://schemas.ogf.org/glue/2009/03/spec_2.0_r1</uri>
+                  <packageName>org.glite.ce.creamapi.ws.es.glue</packageName>
                 </namespaceURI>
               </namespaceURIs>
               <syncMode>sync</syncMode>
@@ -124,7 +139,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.activityinfo</packageName>
-              <wsdlFile>${wsdls.path}/es/ActivityInfoService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ActivityInfoService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>ActivityInfoService</serviceName>
               <namespaceURIs>
@@ -139,6 +154,10 @@
                 <namespaceURI>
                   <uri>http://www.eu-emi.eu/es/2010/12/types</uri>
                   <packageName>org.glite.ce.creamapi.ws.es.activityinfo.types</packageName>
+                </namespaceURI>
+                <namespaceURI>
+                  <uri>http://schemas.ogf.org/glue/2009/03/spec_2.0_r1</uri>
+                  <packageName>org.glite.ce.creamapi.ws.es.glue</packageName>
                 </namespaceURI>
               </namespaceURIs>
               <syncMode>sync</syncMode>
@@ -157,7 +176,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.activitymanagement</packageName>
-              <wsdlFile>${wsdls.path}/es/ActivityManagementService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ActivityManagementService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>ActivityManagementService</serviceName>
               <namespaceURIs>
@@ -198,21 +217,13 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.delegation</packageName>
-              <wsdlFile>${wsdls.path}/es/DelegationService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/delegation-2.0.0-2.1.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>DelegationService</serviceName>
               <namespaceURIs>
                 <namespaceURI>
-                  <uri>http://www.eu-emi.eu/es/2010/12/delegation</uri>
+                  <uri>http://www.gridsite.org/namespaces/delegation-2</uri>
                   <packageName>org.glite.ce.creamapi.ws.es.delegation</packageName>
-                </namespaceURI>
-                <namespaceURI>
-                  <uri>http://www.eu-emi.eu/es/2010/12/delegation/types</uri>
-                  <packageName>org.glite.ce.creamapi.ws.es.delegation.types</packageName>
-                </namespaceURI>
-                <namespaceURI>
-                  <uri>http://www.eu-emi.eu/es/2010/12/types</uri>
-                  <packageName>org.glite.ce.creamapi.ws.es.delegation.types</packageName>
                 </namespaceURI>
               </namespaceURIs>
               <syncMode>sync</syncMode>
@@ -231,7 +242,7 @@
             </goals>
             <configuration>
               <packageName>org.glite.ce.creamapi.ws.es.resourceinfo</packageName>
-              <wsdlFile>${wsdls.path}/es/ResourceInfoService.wsdl</wsdlFile>
+              <wsdlFile>${es.wsdl.url}/ResourceInfoService.wsdl</wsdlFile>
               <databindingName>adb</databindingName>
               <serviceName>ResourceInfoService</serviceName>
               <namespaceURIs>
@@ -285,11 +296,11 @@
             <configuration>
               <finalName>cream-skeleton</finalName>
               <includes>
-                <include>org/glite/ce/creamapi/ws/cream2/**/*.class</include>
+                <include>org/glite/ce/creamapi/ws/cream2/**</include>
               </includes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
             </configuration>
           </execution>
@@ -301,11 +312,11 @@
             <configuration>
               <finalName>ce-delegation-skeleton</finalName>
               <includes>
-                <include>org/glite/ce/security/delegation/**/*.class</include>
+                <include>org/glite/ce/security/delegation/**</include>
               </includes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
             </configuration>
           </execution>
@@ -321,7 +332,7 @@
               </includes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
             </configuration>
           </execution>
@@ -338,8 +349,111 @@
               </excludes>
               <archive>
                 <index>true</index>
-                <manifest><addDefaultImplementationEntries/></manifest>
+                <manifest><addDefaultSpecificationEntries/></manifest>
               </archive>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+        
+          <execution>
+            <id>install-cream-skeleton</id>
+            <phase>install</phase>
+            <goals><goal>install-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>cream-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          
+          <execution>
+            <id>install-delegation-skeleton</id>
+            <phase>install</phase>
+            <goals><goal>install-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/ce-delegation-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>delegation-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>install-es-skeleton</id>
+            <phase>install</phase>
+            <goals><goal>install-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-es-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>es-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+        
+          <execution>
+            <id>deploy-cream-skeleton</id>
+            <phase>deploy</phase>
+            <goals><goal>deploy-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>cream-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+              <repositoryId>igi.website</repositoryId>
+              <url>${igi.repo.url}</url>
+            </configuration>
+          </execution>
+          
+          <execution>
+            <id>deploy-delegation-skeleton</id>
+            <phase>deploy</phase>
+            <goals><goal>deploy-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/ce-delegation-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>delegation-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+              <repositoryId>igi.website</repositoryId>
+              <url>${igi.repo.url}</url>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>deploy-es-skeleton</id>
+            <phase>deploy</phase>
+            <goals><goal>deploy-file</goal></goals>
+            <configuration>
+              <file>${project.build.directory}/cream-es-skeleton.jar</file>
+              <groupId>org.glite.ce</groupId>
+              <artifactId>es-skeleton</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+              <repositoryId>igi.website</repositoryId>
+              <url>${igi.repo.url}</url>
             </configuration>
           </execution>
 
@@ -350,77 +464,111 @@
 
   </build>
 
+  <profiles>
+    <profile>
+      <id>rpmbuild</id>
+      <activation>
+        <property>
+          <name>rpm.repackaging</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <id>rpmbuild</id>
+                <phase>package</phase>
+                <goals><goal>run</goal></goals>
+                <configuration>
+                  <target>
+                    <mkdir dir="${project.build.directory}/rpmbuild/BUILD"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/RPMS"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/SOURCES"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/SPECS"/>
+                    <mkdir dir="${project.build.directory}/rpmbuild/SRPMS"/>
+                    <exec executable="/bin/tar">
+                      <arg line="--exclude .git --exclude target -zcf ${project.build.directory}/rpmbuild/SOURCES/${rpm.pkgname}.tar.gz ."/>
+                    </exec>
+                    <copy file="${project.basedir}/project/${rpm.pkgname}.spec.in" toFile="${project.build.directory}/rpmbuild/SPECS/${rpm.pkgname}.spec"/>
+                    <replace file="${project.build.directory}/rpmbuild/SPECS/${rpm.pkgname}.spec">
+                      <replacefilter token="@PKGNAME@" value="${rpm.pkgname}"/>
+                      <replacefilter token="@PKGVERSION@" value="${project.version}"/>
+                      <replacefilter token="@PKGRELEASE@" value="${rpm.release}"/>
+                      <replacefilter token="@MVNOPTS@" value="-Drpm.repackaging=false -DskipTests"/>
+                    </replace>
+                    <exec executable="/usr/bin/rpmbuild">
+                      <arg line="-ba --define '_topdir ${project.build.directory}/rpmbuild' ${project.build.directory}/rpmbuild/SPECS/${rpm.pkgname}.spec"/>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencies>
   
     <dependency>
       <groupId>org.glite.jdl</groupId>
       <artifactId>jdl-api-java</artifactId>
-      <version>${jdlapij.version}</version>
+      <version>3.2.1</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.glite.ce.commonj</groupId>
       <artifactId>glite-ce-common-java</artifactId>
-      <version>${common.java.version}</version>
+      <version>1.14.3</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.glite.security</groupId>
       <artifactId>trustmanager</artifactId>
-      <version>${trustman.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15</artifactId>
-      <version>${bcprov.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2</artifactId>
-      <version>${axis2.version}</version>
-      <scope>compile</scope>
     </dependency>
     
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
-      <version>${axiom.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
-      <version>${wsdl4j.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.condor</groupId>
       <artifactId>classad</artifactId>
-      <version>${classad.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
-      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
