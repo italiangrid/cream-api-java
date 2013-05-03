@@ -111,9 +111,9 @@ public class Application {
             wipeTime =  new OptionalDuration();
             wipeTime.setOptional(application_type0.getWipeTime().getOptional());
             
-            if (application_type0.getWipeTime().getDuration() != null) {
+            if (application_type0.getWipeTime().getDateTime() != null) {
                 try {
-                    wipeTime.setValue(DatatypeFactory.newInstance().newDurationDayTime(application_type0.getWipeTime().getDuration().getAsCalendar().getTimeInMillis()));
+                    wipeTime.setValue(DatatypeFactory.newInstance().newDurationDayTime(application_type0.getWipeTime().getDateTime().getTimeInMillis()));
                 } catch (DatatypeConfigurationException e) {
                     logger.warn("Error setting duration for wipeTime.");
                 }

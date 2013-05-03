@@ -7,11 +7,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 public class ActivityStatus implements Comparable<ActivityStatus> {
     public static enum StatusAttributeName {
-        APP_FAILURE("APP-FAILURE"), APP_RUNNING("APP-RUNNING"), BATCH_SUSPEND("BATCH-SUSPEND"), CLIENT_PAUSED("CLIENT-PAUSED"), CLIENT_STAGEIN_POSSIBLE("CLIENT-STAGEIN-POSSIBLE"), CLIENT_STAGEOUT_POSSIBLE(
-                "CLIENT-STAGEOUT-POSSIBLE"), DEPROVISIONING("DEPROVISIONING"), EXPIRED("EXPIRED"), POSTPROCESSING_CANCEL("POSTPROCESSING-CANCEL"), POSTPROCESSING_FAILURE(
-                "POSTPROCESSING-FAILURE"), PREPROCESSING_CANCEL("PREPROCESSING-CANCEL"), PREPROCESSING_FAILURE("PREPROCESSING-FAILURE"), PROCESSING_CANCEL("PROCESSING-CANCEL"), PROCESSING_FAILURE(
-                "PROCESSING-FAILURE"), PROVISIONING("PROVISIONING"), SERVER_PAUSED("SERVER-PAUSED"), SERVER_STAGEIN("SERVER-STAGEIN"), SERVER_STAGEOUT("SERVER-STAGEOUT"), VALIDATING(
-                "VALIDATING"), VALIDATION_FAILURE("VALIDATION-FAILURE");
+        APP_FAILURE("app-failure"), APP_RUNNING("app-running"), BATCH_SUSPEND("batch-suspend"), CLIENT_PAUSED("client-paused"), CLIENT_STAGEIN_POSSIBLE("client-stagein-possible"), CLIENT_STAGEOUT_POSSIBLE(
+                "client-stageout-possible"), DEPROVISIONING("deprovisioning"), EXPIRED("expired"), POSTPROCESSING_CANCEL("postprocessing-cancel"), POSTPROCESSING_FAILURE(
+                "postprocessing-failure"), PREPROCESSING_CANCEL("preprocessing-cancel"), PREPROCESSING_FAILURE("preprocessing-failure"), PROCESSING_CANCEL("processing-cancel"), PROCESSING_FAILURE(
+                "processing-failure"), PROVISIONING("provisioning"), SERVER_PAUSED("server-paused"), SERVER_STAGEIN("server-stagein"), SERVER_STAGEOUT("server-stageout"), VALIDATING(
+                "validating"), VALIDATION_FAILURE("validation-failure");
 
         private String name;
 
@@ -41,8 +41,8 @@ public class ActivityStatus implements Comparable<ActivityStatus> {
     };
 
     public static enum StatusName {
-        ACCEPTED("ACCEPTED"), POSTPROCESSING("POSTPROCESSING"), PREPROCESSING("PREPROCESSING"), PROCESSING("PROCESSING"), PROCESSING_ACCEPTING("PROCESSING-ACCEPTING"), PROCESSING_QUEUED(
-                "PROCESSING-QUEUED"), PROCESSING_RUNNING("PROCESSING-RUNNING"), TERMINAL("TERMINAL");
+        ACCEPTED("accepted"), POSTPROCESSING("postprocessing"), PREPROCESSING("preprocessing"), PROCESSING("processing"), PROCESSING_ACCEPTING("processing-accepting"), PROCESSING_QUEUED(
+                "processing-queued"), PROCESSING_RUNNING("processing-running"), TERMINAL("terminal");
 
         private String name;
 

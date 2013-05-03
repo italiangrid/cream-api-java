@@ -50,6 +50,7 @@ public final class JobSubmissionManager extends TimerTask {
     private static String gliteCreamLoadMonitorScriptPath = null;
     private static String gliteCreamLoadMonitorScriptConfigurationFile = "";
     private boolean enableScript  = true;
+    private boolean isLoadMonitorScriptConfigurated = false;
     private JobSubmissionManagerInfo jobSubmissionManagerInfo = new JobSubmissionManagerInfo();
 
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
@@ -66,12 +67,16 @@ public final class JobSubmissionManager extends TimerTask {
 
     private JobSubmissionManager() throws IllegalArgumentException {
         super();
-        if ((gliteCreamLoadMonitorScriptPath == null) || ("".equals(gliteCreamLoadMonitorScriptPath))){
-        	throw new IllegalArgumentException("The script path for JobSubmissionManager must be set correctly! (scriptPath = " + gliteCreamLoadMonitorScriptPath + ")");
+        if ((gliteCreamLoadMonitorScriptPath != null) && (!"".equals(gliteCreamLoadMonitorScriptPath))){
+            //to verify if the script is executable. it throws an IllegalArgument exception if an error occurred.
+            jobSubmissionManagerInfo.setExecutionTimestamp(Calendar.getInstance());
+            jobSubmissionManagerInfo.setShowMessage(executeScript(SHOW_PARAMETER));
+            logger.info("Cream LoadMonitor Script enabled.");
+            isLoadMonitorScriptConfigurated = true;
+        } else {
+            logger.info("Cream LoadMonitor Script disabled.");
+            isLoadMonitorScriptConfigurated = false;
         }
-        //to verify if the script is executable. it throws an IllegalArgument exception if an error occurred.
-        jobSubmissionManagerInfo.setExecutionTimestamp(Calendar.getInstance());
-        jobSubmissionManagerInfo.setShowMessage(executeScript(SHOW_PARAMETER));
     }
 
     public static void setGliteCreamLoadMonitorScriptPath(String gliteCreamLMScriptPath) {
@@ -112,7 +117,7 @@ public final class JobSubmissionManager extends TimerTask {
 	 }
 	
 	public void run() {
-	    if (enableScript) {
+	    if (enableScript && isLoadMonitorScriptConfigurated) {
 	        Calendar executionTimestamp = Calendar.getInstance();
 	        String testErrorMessage = null;
 	        boolean acceptNewJobs = false;

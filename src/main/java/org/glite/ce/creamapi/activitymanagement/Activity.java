@@ -65,7 +65,8 @@ public class Activity extends ActivityDescription {
     public static final String TRANSFER_INPUT = "TRANSFER_INPUT";
     public static final String TRANSFER_OUTPUT = "TRANSFER_OUTPUT";
     public static final String TRANSFER_OUTPUT_REMAPS = "TRANSFER_OUTPUT_REMAPS";
-    public static final String USER_DN = "USER_DN";
+    public static final String USER_DN_X500 = "USER_DN_X500";
+    public static final String USER_DN_RFC2253 = "USER_DN_RFC2253";
     public static final String USER_FQAN = "USER_FQAN";
     public static final String VIRTUAL_ORGANISATION = "VIRTUAL_ORGANISATION";
     public static final String WORKER_NODE = "WORKER_NODE";
