@@ -28,22 +28,47 @@ import org.glite.ce.creamapi.ws.es.adl.Resources_type0;
 
 public class Resources {
     protected String queueName;
-    
+
+    protected ParallelEnvironment parallelEnvironment = null;
+
+    protected SlotRequirement slotRequirement = null;
     public Resources() {
     }
-    
     public Resources(Resources_type0 resources_type0) {
         if (resources_type0 != null) {
             queueName = resources_type0.getQueueName();
+            
+            if (resources_type0.isParallelEnvironmentSpecified()) {
+                parallelEnvironment = new ParallelEnvironment(resources_type0.getParallelEnvironment());                
+            }
+            
+            if (resources_type0.isSlotRequirementSpecified()) {
+                slotRequirement = new SlotRequirement(resources_type0.getSlotRequirement());
+            }
         }
+    }
+    
+    public ParallelEnvironment getParallelEnvironment() {
+        return parallelEnvironment;
     }
     
     public String getQueueName() {
         return queueName;
+    }
+    
+    public SlotRequirement getSlotRequirement() {
+        return slotRequirement;
+    }
+
+    public void setParallelEnvironment(ParallelEnvironment parallelEnvironment) {
+        this.parallelEnvironment = parallelEnvironment;
     }
 
     public void setQueueName(String value) {
         this.queueName = value;
     }
 
+    public void setSlotRequirement(SlotRequirement slotRequirement) {
+        this.slotRequirement = slotRequirement;
+    }
 }
