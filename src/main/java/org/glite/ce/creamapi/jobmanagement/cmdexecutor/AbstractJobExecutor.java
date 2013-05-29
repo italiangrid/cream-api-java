@@ -771,7 +771,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                 try {
                      dateFormat.parse(command.getParameterAsString("STATUS_CHANGE_TIME"));
                 } catch (ParseException e) {
-                    logger.error(e.getMessage(), e);
+                    logger.error(e.getMessage());
                 }
             }
 
@@ -822,7 +822,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                     }
                 }
             } catch (JobManagementException e) {
-                logger.error(e.getMessage(), e);
+                logger.error(e.getMessage());
             }
         } else if (JobCommandConstant.JOB_LIST.equals(command.getName())) {
             logger.debug("Calling jobList.");
@@ -1332,7 +1332,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             try {
                 proc = runtime.exec(cmd);
             } catch (Throwable e) {
-                logger.error("createJobSandboxDir: " + e.getMessage(), e);
+                logger.error("createJobSandboxDir: " + e.getMessage());
                 throw (new IOException("Cannot create the sandbox for job " +  job.getId() + "! " + e.getMessage()));
             }
 
@@ -1655,7 +1655,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
     	try {
             return JobFactory.makeJob(jdl);
         } catch (Throwable e) {
-            logger.error(e.getMessage(), e);
+            logger.error(e.getMessage());
             throw new CommandException(e.getMessage());
         }
     }
