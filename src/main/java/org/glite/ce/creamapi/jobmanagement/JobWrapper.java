@@ -665,7 +665,8 @@ public class JobWrapper {
             }
             jdlReader.close();
         } catch (IOException ioEx) {
-            ioEx.printStackTrace();
+            logger.error(ioEx.getMessage());
+
             if (jdlReader != null)
                 jdlReader.close();
             System.exit(1);

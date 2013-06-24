@@ -153,7 +153,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                 LBLogger.setILPrefix(lbILPrefix);
                 LBLogger.getInstance();
             } catch (Throwable t) {
-                logger.error("LBLogger initialization failed: " + t.getMessage(), t );
+                logger.error("LBLogger initialization failed: " + t.getMessage());
             }
         }
     }
@@ -1068,8 +1068,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                         now.wait(10000);
                         logger.debug("sleeping 10 sec... done");
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        logger.warn(e.getMessage());
                     }
                 }
             }
@@ -1806,13 +1805,13 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                 try {
                     LBLogger.getInstance().register(job);
                 } catch (Throwable e) {
-                    logger.warn("LBLogger.register() failed: " + e.getMessage(),e );
+                    logger.warn("LBLogger.register() failed: " + e.getMessage());
                 }
 
                 try {
                     LBLogger.getInstance().accept(job);
                 } catch (Throwable e) {
-                    logger.warn("LBLogger.accept() failed: " + e.getMessage(),e );
+                    logger.warn("LBLogger.accept() failed: " + e.getMessage());
                 }
             }
 
@@ -1849,7 +1848,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             logger.error(e.getMessage());
             throw e;
         } catch (Throwable e) {
-            logger.error(e.getMessage(), e);
+            logger.error(e.getMessage());
             throw new CommandExecutorException(e);
         } 
 
