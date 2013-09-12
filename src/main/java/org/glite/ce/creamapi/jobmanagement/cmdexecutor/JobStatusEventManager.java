@@ -79,8 +79,8 @@ public class JobStatusEventManager implements JobStatusEventManagerInterface {
         try {
             eventList = jobDB.retrieveJobStatusAsEvent(eventId, null, null, null, null, 1, userId);
         } catch (DatabaseException de) {
-            logger.error("Error retrieving events fom database: " + de.getMessage());
-            throw new EventManagerException("Error retrieving events fom database: " + de.getMessage());
+            logger.error("Error retrieving events from database: " + de.getMessage());
+            throw new EventManagerException("Error retrieving events from database");
         }
         if (eventList.size() != 0) {
             event = eventList.get(0);
@@ -97,8 +97,8 @@ public class JobStatusEventManager implements JobStatusEventManagerInterface {
         try {
             eventList = jobDB.retrieveJobStatusAsEvent(fromEventId, toEventId, fromDate, toDate, jobStatusType, Math.min(maxEvents, this.maxEvents), userId);
         } catch (DatabaseException de) {
-            logger.error("Error retrieving events fom database: " + de.getMessage());
-            throw new EventManagerException("Error retrieving events fom database: " + de.getMessage());
+            logger.error("Error retrieving events from database: " + de.getMessage());
+            throw new EventManagerException("Error retrieving events from database");
         }
         return eventList;
     }

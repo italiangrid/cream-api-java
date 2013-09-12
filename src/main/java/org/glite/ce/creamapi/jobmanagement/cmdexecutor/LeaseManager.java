@@ -109,8 +109,8 @@ public final class LeaseManager extends TimerTask {
             try {
                 executor.getJobDB().deleteJobLease(leaseId, userId);
             } catch (DatabaseException e) {
-                logger.error("delete job lease is failed! " + e.getMessage());
-                throw new CommandException(e.getMessage());
+                logger.error("job lease deletion failed! " + e.getMessage());
+                throw new CommandException("job lease deletion failed due to some database problems");
             }
         }
         logger.debug("After synchronized (mutex)");
@@ -161,7 +161,7 @@ public final class LeaseManager extends TimerTask {
                             + " userId = " + lease.getUserId());
                 } catch (DatabaseException de2) {
                     logger.error("Problem to update/insert jobLease. " + de2.getMessage());
-                    throw new CommandException("Problem to update/insert jobLease. " + de2.getMessage());
+                    throw new CommandException("Problem to update/insert jobLease due to some database problems");
                 }
             }
         }
@@ -190,7 +190,8 @@ public final class LeaseManager extends TimerTask {
             try {
                 executor.getJobDB().setLeaseId(leaseId, jobId, userId);
             } catch (DatabaseException e) {
-                throw new CommandException(e.getMessage());
+                logger.error(e.getMessage());
+                throw new CommandException("setLeaseId failed due to some database problems");
             }
         }
         logger.debug("After synchronized (mutex)");
