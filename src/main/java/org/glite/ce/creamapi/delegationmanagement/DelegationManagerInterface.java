@@ -36,6 +36,7 @@ public interface DelegationManagerInterface {
 
     public Delegation getDelegation(String delegationId, String dn, String localUser, boolean includeCertificate) throws DelegationException, DelegationManagerException;
 
+
     public DelegationRequest getDelegationRequest(String reqId, String dn, String localUser) throws DelegationException, DelegationManagerException;
 
     public List<DelegationRequest> getDelegationRequests(String dn, String localUser) throws DelegationException, DelegationManagerException;
@@ -43,6 +44,7 @@ public interface DelegationManagerInterface {
     public List<Delegation> getDelegations(Calendar expirationTime) throws DelegationException, DelegationManagerException;
 
     public List<Delegation> getDelegations(Calendar expirationTime, boolean includeCertificate) throws DelegationException, DelegationManagerException;
+
 
 //    public List<DelegationRequest> getExpiredDelegationRequests() throws DelegationException, DelegationManagerException;
 

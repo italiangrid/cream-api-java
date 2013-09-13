@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URI;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,7 +63,6 @@ import org.glite.ce.creamapi.jobmanagement.command.JobIdFilterFailure;
 import org.glite.ce.creamapi.jobmanagement.command.JobIdFilterResult;
 import org.glite.ce.creamapi.jobmanagement.db.JobDBInterface;
 import org.glite.ce.creamapi.jobmanagement.jdl.JobFactory;
-
 
 public abstract class AbstractJobExecutor extends AbstractCommandExecutor implements JobStatusChangeListener {
     private final static Logger logger = Logger.getLogger(AbstractJobExecutor.class.getName());
@@ -445,7 +445,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             }
         } catch (DatabaseException e) {
             logger.error(e.getMessage());
-            throw new CommandException(e.getMessage());
+            throw new CommandException("database error occurred");
         }
 
         JobEnumeration jobEnum = new JobEnumeration(jobIdFound, jobDB);
@@ -495,8 +495,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
             logger.debug("insertJobCommand local user " + jobCommand.getUserId() + " delegId = " + delegationId);
         } catch (DatabaseException de) {
-            logger.error("insertJobCommand error: " + de.getMessage());
-            throw new CommandException(de.getMessage());         
+            logger.error(de.getMessage());
+            throw new CommandException("database error occurred");
         } catch (IllegalArgumentException ie) {
             throw new CommandException(ie.getMessage());
         }
@@ -694,7 +694,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                     }
                 }
             } catch (DatabaseException e) {
-                throw new CommandException(e.getMessage());
+                logger.error(e.getMessage());
+                throw new CommandException("database error occurred");
             }
         } else if (JobCommandConstant.QUERY_EVENT.equals(command.getName())) {
             logger.debug("Calling queryEvent.");
@@ -821,7 +822,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                 command.getResult().addParameter("JOB_ENUM", jobEnum);
             } catch (DatabaseException e) {
                 logger.error(e.getMessage());
-                throw new CommandException(e.getMessage());
+                throw new CommandException("database error occurred");
             }
         } else {
             JobEnumeration jobEnum = getJobList(command);
@@ -963,7 +964,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                     }
                 }
             } catch (DatabaseException e) {
-                throw new CommandException(e.getMessage());
+                logger.error(e.getMessage());
+                throw new CommandException("database error occurred");
             } catch (JobManagementException e) {
                 throw new CommandException(e.getMessage());
             }
@@ -1140,7 +1142,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
             command.getResult().addParameter("LEASE_LIST", leaseList);
         } catch (DatabaseException e) {
-            throw new CommandException(e.getMessage());
+            logger.error(e.getMessage());
+            throw new CommandException("database error occurred");
         }
         logger.debug("End getLease");
     }
@@ -1746,7 +1749,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                         job.setId(job.generateJobId());
                         count++;
                     } else {
-                        throw new CommandException(de.getMessage());
+                        logger.error(de.getMessage());
+                        throw new CommandException("database error occurred");
                     }
                 } catch (IllegalArgumentException ie) {
                     throw new CommandException(ie.getMessage());
@@ -1759,7 +1763,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
 
             jobCmd.setJobId(job.getId());
             jobCmd.setStatus(JobCommand.SUCCESSFULL);
-            
+           
             try {
                 createJobSandboxDir(job, cmd.getParameterAsString("GSI_FTP_CREAM_URL"));
             } catch (Throwable e) {
@@ -1868,7 +1872,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             logger.info("purge: purged job " + job.getId());
         } catch (DatabaseException e) {
             logger.error(e.getMessage());
-            throw new CommandException(e.getMessage());
+            throw new CommandException("database error occurred");
         }
     }
 
@@ -1928,7 +1932,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
             logger.warn("job " + status.getJobId() + " not found!");
             return false;
         }
-        
+      
         JobStatus lastStatus = job.getLastStatus();
 /*
         if (lastStatus == null) {
@@ -1969,8 +1973,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                     logger.error(e);
                     throw new JobManagementException(e);
                 } catch (DatabaseException e) {
-                    logger.error(e);
-                    throw new JobManagementException(e);
+                    logger.error(e.getMessage());
+                    throw new JobManagementException("database error occurred");
                 }
             }
         } else {
@@ -2046,7 +2050,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                         status.setType(oldStatus.getType() == JobStatus.REALLY_RUNNING ? JobStatus.REALLY_RUNNING : JobStatus.RUNNING);
                     }
                 } catch (DatabaseException e) {
-                    throw new JobManagementException(e);
+                    logger.error(e.getMessage());
+                    throw new JobManagementException("database error occurred");
                 }
                 break;
 
@@ -2116,8 +2121,8 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
                 logger.error(e);
                 throw new JobManagementException(e);
             } catch (DatabaseException e) {
-                logger.error(e);
-                throw new JobManagementException(e);
+                logger.error(e.getMessage());
+                throw new JobManagementException("database error occurred");
             }
 
             try {
@@ -2360,7 +2365,7 @@ public abstract class AbstractJobExecutor extends AbstractCommandExecutor implem
         }
         
         this.jobDB = jobDB;
-        
+ 
         EventManagerFactory.addEventManager("JOB_STATUS_EVENT_MANAGER", new JobStatusEventManager(jobDB, 500));
         
         try {
