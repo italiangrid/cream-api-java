@@ -4,11 +4,11 @@
 
   <groupId>org.glite.ce</groupId>
   <artifactId>cream-api-java</artifactId>
-  <version>1.16.1</version>
+  <version>1.16.2</version>
   <packaging>jar</packaging>
 
   <properties>
-    <rpm.release>2</rpm.release>
+    <rpm.release>1</rpm.release>
     <rpm.pkgname>glite-ce-cream-api-java</rpm.pkgname>
   </properties>
   

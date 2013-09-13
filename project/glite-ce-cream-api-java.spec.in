@@ -45,7 +45,10 @@ rm -rf %{buildroot}
 /usr/share/java/glite-ce-*.jar
 
 %changelog
-* Fri Jun 28 2013 CREAM group <cream-support@lists.infn.it> - @PKGVERSION@-@PKGRELEASE@
+* Mon Sep 30 2013 CREAM group <cream-support@lists.infn.it> - @PKGVERSION@-@PKGRELEASE@
+- Fix for bug https://issues.infn.it/jira/browse/CREAM-113
+
+* Fri Jun 28 2013 CREAM group <cream-support@lists.infn.it> - 1.16.1-2
 - New major release
 
 
