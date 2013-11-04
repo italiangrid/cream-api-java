@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.glite.ce</groupId>
+    <artifactId>cream-api-parent</artifactId>
+    <version>1.16.3-SNAPSHOT</version>
+  </parent>
+  <artifactId>cream-api-java</artifactId>
+  <packaging>jar</packaging>
+  
+  <properties>
+    <rpm.build.directory>../target/rpmbuild</rpm.build.directory>
+    <rpm.spec.template>../project/${rpm.pkgname}.spec.in</rpm.spec.template>
+  </properties>
+
+  <build>
+  
+    <sourceDirectory>../src/main/java</sourceDirectory>
+    
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  <dependencies>
+  
+    <dependency>
+      <groupId>org.glite.ce</groupId>
+      <artifactId>cream-skeleton</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glite.ce</groupId>
+      <artifactId>ce-delegation-skeleton</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glite.ce</groupId>
+      <artifactId>cream-es-skeleton</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+  </dependencies>
+
+</project>

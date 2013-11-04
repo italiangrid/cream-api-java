@@ -21,19 +21,15 @@ Java libraries for the CREAM service
 %prep
 %setup -c -q
 
-%build
-mvn @MVNOPTS@ compile
-
-
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}
 mvn @MVNOPTS@ install
 mkdir -p %{buildroot}/usr/share/java
-cp %{_builddir}/%{name}-%{version}/target/cream-api-java-@PKGVERSION@.jar %{buildroot}/usr/share/java/glite-ce-cream-api-java.jar
-cp %{_builddir}/%{name}-%{version}/target/ce-delegation-skeleton.jar %{buildroot}/usr/share/java/glite-ce-delegation-skeleton.jar
-cp %{_builddir}/%{name}-%{version}/target/cream-es-skeleton.jar %{buildroot}/usr/share/java/glite-ce-cream-es-skeleton.jar
-cp %{_builddir}/%{name}-%{version}/target/cream-skeleton.jar %{buildroot}/usr/share/java/glite-ce-cream-skeleton.jar
+cp %{_builddir}/%{name}-%{version}/cream-toplevel-api/target/cream-api-java-*.jar %{buildroot}/usr/share/java/glite-ce-cream-api-java.jar
+cp %{_builddir}/%{name}-%{version}/delegation-skeleton/target/ce-delegation-skeleton-*.jar %{buildroot}/usr/share/java/glite-ce-delegation-skeleton.jar
+cp %{_builddir}/%{name}-%{version}/es-skeleton/target/cream-es-skeleton-*.jar %{buildroot}/usr/share/java/glite-ce-cream-es-skeleton.jar
+cp %{_builddir}/%{name}-%{version}/cream-skeleton/target/cream-skeleton-*.jar %{buildroot}/usr/share/java/glite-ce-cream-skeleton.jar
 
  
 

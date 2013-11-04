@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.glite.ce</groupId>
+    <artifactId>cream-api-parent</artifactId>
+    <version>1.16.3-SNAPSHOT</version>
+  </parent>
+  <artifactId>cream-api-pack</artifactId>
+  <packaging>pom</packaging>
+  
+  <properties>
+    <rpm.build.directory>${project.basedir}/../target/rpmbuild</rpm.build.directory>
+    <rpm.spec.template>${project.basedir}/../project/${rpm.pkgname}.spec.in</rpm.spec.template>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>rpmbuild</id>
+      <activation>
+        <property>
+          <name>rpm.repackaging</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <id>rpmbuild</id>
+                <phase>package</phase>
+                <goals><goal>run</goal></goals>
+                <configuration>
+                  <target>
+                    <mkdir dir="${rpm.build.directory}/BUILD"/>
+                    <mkdir dir="${rpm.build.directory}/RPMS"/>
+                    <mkdir dir="${rpm.build.directory}/SOURCES"/>
+                    <mkdir dir="${rpm.build.directory}/SPECS"/>
+                    <mkdir dir="${rpm.build.directory}/SRPMS"/>
+                    <exec executable="/bin/tar" dir="${project.basedir}/..">
+                      <arg line="--exclude .git --exclude target -zcf target/rpmbuild/SOURCES/${rpm.pkgname}.tar.gz ."/>
+                    </exec>
+                    <copy file="${rpm.spec.template}" toFile="${rpm.build.directory}/SPECS/${rpm.pkgname}.spec"/>
+                    <replace file="${rpm.build.directory}/SPECS/${rpm.pkgname}.spec">
+                      <replacefilter token="@PKGNAME@" value="${rpm.pkgname}"/>
+                      <replacefilter token="@PKGVERSION@" value="1.16.3"/>
+                      <replacefilter token="@PKGRELEASE@" value="${rpm.release}"/>
+                      <replacefilter token="@MVNOPTS@" value="-Drpm.repackaging=false -DskipTests"/>
+                    </replace>
+                    <exec executable="/usr/bin/rpmbuild" dir="${project.basedir}/..">
+                      <arg line="-ba --define '_topdir ${project.basedir}/../target/rpmbuild' target/rpmbuild/SPECS/${rpm.pkgname}.spec"/>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
+

@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.glite.ce</groupId>
+    <artifactId>cream-api-parent</artifactId>
+    <version>1.16.3-SNAPSHOT</version>
+  </parent>
+  <artifactId>cream-skeleton</artifactId>
+  <packaging>jar</packaging>
+
+  <build>
+  
+    <plugins>
+      
+      <plugin>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
+        <version>1.6.1</version>
+        <executions>
+
+          <execution>
+            <goals>
+              <goal>wsdl2code</goal>
+            </goals>
+            <configuration>
+              <packageName>org.glite.ce.creamapi.ws.cream2</packageName>
+              <wsdlFile>${cream.wsdl.url}/org.glite.ce-cream2_service.wsdl</wsdlFile>
+              <databindingName>adb</databindingName>
+              <serviceName>CREAM</serviceName>
+              <namespaceURIs>
+                <namespaceURI>
+                  <uri>http://glite.org/2007/11/ce/cream/types</uri>
+                  <packageName>org.glite.ce.creamapi.ws.cream2.types</packageName>
+                </namespaceURI>
+                <namespaceURI>
+                  <uri>http://glite.org/ce/faults</uri>
+                  <packageName>org.glite.ce.creamapi.ws.cream.faults</packageName>
+                </namespaceURI>
+                <namespaceURI>
+                  <uri>http://www.gridsite.org/namespaces/delegation-2</uri>
+                  <packageName>org.glite.ce.security.delegation</packageName>
+                </namespaceURI>
+              </namespaceURIs>
+              <syncMode>sync</syncMode>
+              <generateServerSide>true</generateServerSide>
+              <generateServicesXml>true</generateServicesXml>
+              <generateServerSideInterface>true</generateServerSideInterface>
+              <unwrap>true</unwrap>
+              <generateAllClasses>true</generateAllClasses>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
