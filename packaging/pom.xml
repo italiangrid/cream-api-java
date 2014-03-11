@@ -48,7 +48,7 @@
                     <copy file="${rpm.spec.template}" toFile="${rpm.build.directory}/SPECS/${rpm.pkgname}.spec"/>
                     <replace file="${rpm.build.directory}/SPECS/${rpm.pkgname}.spec">
                       <replacefilter token="@PKGNAME@" value="${rpm.pkgname}"/>
-                      <replacefilter token="@PKGVERSION@" value="1.16.3"/>
+                      <replacefilter token="@PKGVERSION@" value="${project.version}"/>
                       <replacefilter token="@PKGRELEASE@" value="${rpm.release}"/>
                       <replacefilter token="@MVNOPTS@" value="-Drpm.repackaging=false -DskipTests"/>
                     </replace>
