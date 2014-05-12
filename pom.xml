@@ -4,7 +4,7 @@
 
   <groupId>org.glite.ce</groupId>
   <artifactId>cream-api-parent</artifactId>
-  <version>1.16.3-SNAPSHOT</version>
+  <version>1.16.3</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.glite</groupId>
     <artifactId>cream-parent</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
   </parent>
 
   <modules>
@@ -32,25 +32,6 @@
     <developerConnection>scm:git:ssh://git@github.com:italiangrid/cream-api-java.git</developerConnection>
   </scm>
 
-
-
-      <distributionManagement>
-        <repository>
-          <id>gimo2-repo</id>
-          <name>Gimo2 releases repository</name>
-          <url>scp://gimo2.pd.infn.it/var/maven/releases</url>
-        </repository>
-        <snapshotRepository>
-          <id>gimo2-repo</id>
-          <name>Gimo2 snapshots repository</name>
-          <url>scp://gimo2.pd.infn.it/var/maven/snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-
-
-
-
-
   <dependencies>
   
     <dependency>
@@ -63,7 +44,7 @@
     <dependency>
       <groupId>org.glite.ce</groupId>
       <artifactId>cream-common</artifactId>
-      <version>1.16.1</version>
+      <version>1.16.2</version>
       <scope>compile</scope>
     </dependency>
 

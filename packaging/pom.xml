@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.glite.ce</groupId>
     <artifactId>cream-api-parent</artifactId>
-    <version>1.16.3-SNAPSHOT</version>
+    <version>1.16.3</version>
   </parent>
   <artifactId>cream-api-pack</artifactId>
   <packaging>pom</packaging>
