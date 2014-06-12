@@ -810,9 +810,9 @@ public class JDL {
 
                     if (expr == null) {
                         throw new Exception(key + ": none expression found");
-                    } else if (!expr.isConstant()) {
+                    } /*else if (!expr.isConstant()) {
                         throw new Exception(key + ": not constant expression found");
-                    }
+                    }*/
                 }
                 attributes.put(key, expr);
             }
