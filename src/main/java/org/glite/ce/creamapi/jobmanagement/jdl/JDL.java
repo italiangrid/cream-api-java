@@ -701,7 +701,18 @@ public class JDL {
             return getList(expr);
         }
 
-        throw new Exception("attribute " + expr.getClass().getName() + " not supported");
+        if (expr != null) {
+            String value = expr.toString();
+            if (value.length() > 0) {
+                if (value.charAt(0) == '"') {
+                    value = value.substring(1, value.length() - 1);
+                }
+            }
+
+            return value;
+        }
+
+        throw new Exception("attribute " + attrName + " " + expr.getClass().getName() + " not supported");
     }
 
     public String getVirtualOrganisation() throws Exception {
