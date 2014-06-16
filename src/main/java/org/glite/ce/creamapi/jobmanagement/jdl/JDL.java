@@ -712,7 +712,7 @@ public class JDL {
             return value;
         }
 
-        throw new Exception("attribute " + attrName + " " + expr.getClass().getName() + " not supported");
+        throw new Exception("attribute " + attrName + ": " + expr.getClass().getName() + " not supported");
     }
 
     public String getVirtualOrganisation() throws Exception {
