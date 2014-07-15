@@ -29,21 +29,20 @@ import org.glite.ce.creamapi.jobmanagement.Job;
 
 public class JobFactory {
 
-    private static boolean checkFileSandbox(String filename, List<String> sandbox) {
-        if (filename != null && !(filename.startsWith("$") || filename.startsWith(File.separator)) && new File(filename).getName().equals(filename)) {
-            boolean found = false;
+    private static boolean checkFileSandbox(String filename, List<String> sandbox) throws Exception {
+        boolean found = false;
 
-            for (String file : sandbox) {
-                if (file.endsWith(filename)) {
-                    found = true;
-                }
-            }
-
-            return found;
-        } else {
-            return true;
+        for (String file : sandbox) {
+            if (file.endsWith(filename)) {
+                found = true;
+                break;
+            } 
         }
+
+        return found;
     }
+
+
 
     public static Job makeJob(String classad) throws Exception {
         JDL jdl = new JDL(classad);
@@ -60,7 +59,6 @@ public class JobFactory {
         job.setNodeNumber(jdl.getNodeNumber());
         job.setGridJobId(jdl.getEDGJobId());
         job.setEnvironment(jdl.getEnvironment());
-        job.setArguments(jdl.getArguments());
         job.setCeRequirements(jdl.getCERequirements());
         job.setHlrLocation(jdl.getHLRLocation());
         job.setMyProxyServer(jdl.getMyProxyServer());
@@ -79,18 +77,31 @@ public class JobFactory {
         job.setStandardOutput(jdl.getStandardOutput());
         job.setStandardError(jdl.getStandardError());
 
-        /*
-         * INPUTSANDBOX / EXECUTABLE cross- check
-         */
-        if (!checkFileSandbox(job.getExecutable(), job.getInputFiles())) {
-            throw new Exception(JDL.INPUTSANDBOX + ": the executable file is not listed in the InputSandbox");
+        String args = jdl.getArguments();
+        if (args != null) {
+           ArrayList<String> arguments = new ArrayList<String>(1);
+           arguments.add(args);
+           job.setArguments(arguments);
         }
+
+        /*
+         * INPUTSANDBOX / EXECUTABLE cross-check
+         */
+        String filename = job.getExecutable();
+        if (filename != null && !(filename.startsWith("$") || filename.startsWith(File.separator)) && new File(filename).getName().equals(filename)) {
+            if (!checkFileSandbox(filename, job.getInputFiles())) {
+                throw new Exception(JDL.INPUTSANDBOX + ": the executable file is not listed in the InputSandbox");
+            }
+        } 
 
         /*
          * INPUTSANDBOX / STDINPUT cross-check
          */
-        if (!checkFileSandbox(job.getStandardInput(), job.getInputFiles())) {
-            throw new Exception(JDL.INPUTSANDBOX + ": the stdInput file is not listed in the InputSandbox");
+        filename = job.getStandardInput();
+        if (filename != null && !(filename.startsWith("$") || filename.startsWith(File.separator)) && new File(filename).getName().equals(filename)) {
+            if (!checkFileSandbox(filename, job.getInputFiles())) {
+                throw new Exception(JDL.INPUTSANDBOX + ": the stdInput file is not listed in the InputSandbox");
+            }
         }
 
         /*

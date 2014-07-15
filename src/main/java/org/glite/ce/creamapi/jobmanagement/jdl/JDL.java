@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.glite.jdl.Jdl;
-
 import condor.classad.AttrName;
 import condor.classad.ClassAdParser;
 import condor.classad.Constant;
@@ -41,6 +39,9 @@ public class JDL {
     public static final String OSBBASEURI = "OutputSandboxBaseDestURI";
     public static final String OSBURI = "OutputSandboxDestURI";
     public static final String OUTPUTDATA = "OutputData";
+    public static final String OUTPUTDATA_OUTPUTFILE = "OutputFile";
+    public static final String OUTPUTDATA_LOGICALFILENAME = "LogicalFileName";
+    public static final String OUTPUTDATA_STORAGEELEMENT = "StorageElement";
     public static final String OUTPUTSANDBOX = "OutputSandbox";
     public static final String OUTPUTSANDBOX_BASEDESTURI = "OutputSandboxBaseDestURI";
     public static final String OUTPUTSANDBOX_DESTURI = "OutputSandboxDestURI";
@@ -166,15 +167,8 @@ public class JDL {
         }
     }
 
-    public ArrayList<String> getArguments() throws Exception {
-        String args = (String) getValue(ARGUMENTS, Expr.STRING, false);
-        ArrayList<String> result = new ArrayList<String>(0);
-
-        if (args != null) {
-            result.add(args);
-        }
-
-        return result;
+    public String getArguments() throws Exception {
+        return (String) getValue(ARGUMENTS, Expr.STRING, false);
     }
 
     public String getBatchSystem() throws Exception {
@@ -430,16 +424,16 @@ public class JDL {
                 outputDataRecord = new OutputDataRecord();
                 jdlRecExpr = (RecordExpr) iteratorExpr.next();
 
-                exprTmp = jdlRecExpr.lookup(Jdl.OD_OUTPUT_FILE);
+                exprTmp = jdlRecExpr.lookup(OUTPUTDATA_OUTPUTFILE);
                 if (exprTmp == null) {
                     throw new Exception("OutputFile is mandatory for the OutputData jdl attribute.");
                 }
                 outputDataRecord.setODOutputFile(exprTmp.stringValue().trim());
 
-                exprTmp = jdlRecExpr.lookup(Jdl.OD_LOGICAL_FILENAME);
+                exprTmp = jdlRecExpr.lookup(OUTPUTDATA_LOGICALFILENAME);
                 outputDataRecord.setODLogicalFilename((exprTmp != null) ? exprTmp.stringValue().trim() : "");
 
-                exprTmp = jdlRecExpr.lookup(Jdl.OD_STORAGE_ELEMENT);
+                exprTmp = jdlRecExpr.lookup(OUTPUTDATA_STORAGEELEMENT);
                 outputDataRecord.setODStorageElement((exprTmp != null) ? exprTmp.stringValue().trim() : "");
 
                 outputDataAttribute.add(outputDataRecord);
@@ -775,31 +769,29 @@ public class JDL {
         RecordExpr jdlExpr = (RecordExpr) expr;
 
         String type = null;
-        expr = jdlExpr.lookup(Jdl.TYPE);
+        expr = jdlExpr.lookup(TYPE);
 
         if (expr == null) {
-            type = Jdl.TYPE_JOB;
+            type = "Job";
         } else if (!expr.isConstant()) {
-            throw new Exception("Wrong type parameter");
+            throw new Exception(TYPE + " \"" + expr.stringValue() + "\" not allowed");
         } else {
             type = expr.stringValue();
         }
 
-        if (type.equalsIgnoreCase(Jdl.TYPE_JOB)) {
+        if (type.equalsIgnoreCase("Job")) {
             String jobType = null;
 
-            expr = jdlExpr.lookup(Jdl.JOBTYPE);
+            expr = jdlExpr.lookup(JOBTYPE);
 
             if (expr == null) {
-                jobType = Jdl.JOBTYPE_NORMAL;
-            } else if (!expr.isConstant()) {
-                throw new Exception("Missing or wrong job type");
+                jobType = "Normal";
             } else {
                 jobType = expr.stringValue();
             }
 
-            if (jobType.equalsIgnoreCase(Jdl.JOBTYPE_PARAMETRIC)) {
-                throw new Exception("Unsupported job type " + Jdl.JOBTYPE_PARAMETRIC);
+            if (!jobType.equalsIgnoreCase("Normal")) {
+                throw new Exception(JOBTYPE + " \"" + jobType + "\" not allowed");
             }
 
             @SuppressWarnings("unchecked")
@@ -827,10 +819,8 @@ public class JDL {
                 }
                 attributes.put(key, expr);
             }
-        } else if (type.equalsIgnoreCase(Jdl.TYPE_COLLECTION)) {
-            throw new Exception("Unsupported type " + Jdl.TYPE_COLLECTION);
         } else {
-            throw new Exception("Unsupported type " + expr.toString());
+            throw new Exception(TYPE + " \"" + type + "\" not allowed");
         }
     }
 /*
