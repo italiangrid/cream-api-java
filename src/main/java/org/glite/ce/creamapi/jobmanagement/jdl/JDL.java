@@ -335,7 +335,7 @@ public class JDL {
     }
 
     public String getMaxOutputSandboxSize() throws Exception {
-        return (String) getValue(MAX_OUTPUT_SANDBOX_SIZE, Expr.STRING, false);
+        return "" + getValue(MAX_OUTPUT_SANDBOX_SIZE, Expr.REAL, false);
     }
 
     public String getMWVersion() throws Exception {
