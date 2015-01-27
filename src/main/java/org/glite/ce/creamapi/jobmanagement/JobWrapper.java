@@ -463,23 +463,25 @@ public class JobWrapper {
     	
     	// osb
     	String maxOutputSandboxSize = (String)job.getVolatileProperty(Job.MAX_OUTPUT_SANDBOX_SIZE);
-    	logger.debug("maxOutputSandboxSize = " + maxOutputSandboxSize);
     	long maxOutputSandboxSizeLong = -1;
     	if ((maxOutputSandboxSize != null) && (maxOutputSandboxSize.length() > 0)){
-    		if (maxOutputSandboxSize.startsWith("(")){
-    			maxOutputSandboxSize = maxOutputSandboxSize.substring(1);
-    		}
-    		if (maxOutputSandboxSize.endsWith(")")){
-    			maxOutputSandboxSize = maxOutputSandboxSize.substring(0, maxOutputSandboxSize.length()-1);
-    		}
-    		logger.debug("maxOutputSandboxSize without parentheses = " + maxOutputSandboxSize);
-    		try{
-    			maxOutputSandboxSizeLong = Math.round(Double.parseDouble(maxOutputSandboxSize));
-    		} catch (NumberFormatException nfe){
-    			logger.error(" Number mismatch for maxOutputSandboxSize = " + maxOutputSandboxSize);
-    			throw new IllegalArgumentException(" Number mismatch for maxOutputSandboxSize = " + maxOutputSandboxSize);
-    		}
-    	}
+            if (maxOutputSandboxSize.startsWith("(")){
+                maxOutputSandboxSize = maxOutputSandboxSize.substring(1);
+            }
+
+            if (maxOutputSandboxSize.endsWith(")")){
+                maxOutputSandboxSize = maxOutputSandboxSize.substring(0, maxOutputSandboxSize.length()-1);
+            }
+ 
+            logger.debug("maxOutputSandboxSize without parentheses = " + maxOutputSandboxSize);
+
+            try {
+                maxOutputSandboxSizeLong = Math.round(Double.parseDouble(maxOutputSandboxSize));
+            } catch (NumberFormatException nfe){
+                logger.error(" Number mismatch for maxOutputSandboxSize = " + maxOutputSandboxSize);
+                throw new IllegalArgumentException(" Number mismatch for maxOutputSandboxSize = " + maxOutputSandboxSize);
+            }
+        }
     	wrapper.append("__max_osb_size=").append("" + maxOutputSandboxSizeLong).append("\n");
 
         fileNames = job.getOutputFiles();

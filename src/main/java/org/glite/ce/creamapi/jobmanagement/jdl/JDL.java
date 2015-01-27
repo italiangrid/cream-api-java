@@ -12,9 +12,17 @@ import condor.classad.ClassAdParser;
 import condor.classad.Constant;
 import condor.classad.Expr;
 import condor.classad.ListExpr;
+import condor.classad.Op;
 import condor.classad.RecordExpr;
 
+
+
+import org.apache.log4j.Logger;
+
+
 public class JDL {    
+    private static final Logger logger = Logger.getLogger(JDL.class.getName());
+
     /*** JDL attributes */
     public static final String ARGUMENTS = "Arguments";
     public static final String BATCHSYSTEM = "BatchSystem";
@@ -73,6 +81,8 @@ public class JDL {
 
         this.jdl = jdl;
         attributes = new Hashtable<String, Expr>(0);
+
+        logger.debug(jdl);
 
         parse();
     }
@@ -335,7 +345,13 @@ public class JDL {
     }
 
     public String getMaxOutputSandboxSize() throws Exception {
-        return "" + getValue(MAX_OUTPUT_SANDBOX_SIZE, Expr.REAL, false);
+        Double maxOutputSandboxSize = (Double)getValue(MAX_OUTPUT_SANDBOX_SIZE, Expr.REAL, false);
+
+        if (maxOutputSandboxSize != null) {	
+            return maxOutputSandboxSize.toString();
+        } else {
+            return null;
+        }
     }
 
     public String getMWVersion() throws Exception {
@@ -656,7 +672,13 @@ public class JDL {
             }
         }
 
+
         Expr expr = attributes.get(attrName.toLowerCase());
+
+        if (expr instanceof Op) {
+            expr = expr.eval();
+        }
+
         if (expr instanceof Constant) {
             Constant co = (Constant) expr;
 
@@ -689,6 +711,8 @@ public class JDL {
             } else {
                 throw new IllegalArgumentException(attrName + ": unexpected type found.");
             }
+        } else {
+             logger.warn("not a constant! " + expr);
         }
 
         if (expr instanceof ListExpr) {
@@ -758,6 +782,7 @@ public class JDL {
         }
 
         ClassAdParser cp = new ClassAdParser(jdl);
+
         Expr expr = cp.parse();
 
         if (expr == null) {
