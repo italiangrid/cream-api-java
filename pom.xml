@@ -23,7 +23,6 @@
   <modules>
     <module>cream-skeleton</module>
     <module>delegation-skeleton</module>
-    <module>es-skeleton</module>
     <module>cream-toplevel-api</module>
     <module>packaging</module>
   </modules>

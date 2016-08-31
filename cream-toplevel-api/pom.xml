@@ -28,6 +28,9 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+          <excludes>
+            <exclude>org/glite/ce/creamapi/activitymanagement/**/*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
@@ -51,12 +54,12 @@
       <scope>compile</scope>
     </dependency>
 
-    <dependency>
+    <!-- dependency>
       <groupId>org.glite.ce</groupId>
       <artifactId>cream-es-skeleton</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
-    </dependency>
+    </dependency -->
 
   </dependencies>
 
