@@ -28,7 +28,9 @@ mvn @MVNOPTS@ install
 mkdir -p %{buildroot}/usr/share/java
 cp %{_builddir}/%{name}-%{version}/cream-toplevel-api/target/cream-api-java-*.jar %{buildroot}/usr/share/java/glite-ce-cream-api-java.jar
 cp %{_builddir}/%{name}-%{version}/delegation-skeleton/target/ce-delegation-skeleton-*.jar %{buildroot}/usr/share/java/glite-ce-delegation-skeleton.jar
+%if 0%{?espack}
 cp %{_builddir}/%{name}-%{version}/es-skeleton/target/cream-es-skeleton-*.jar %{buildroot}/usr/share/java/glite-ce-cream-es-skeleton.jar
+%endif
 cp %{_builddir}/%{name}-%{version}/cream-skeleton/target/cream-skeleton-*.jar %{buildroot}/usr/share/java/glite-ce-cream-skeleton.jar
 
  
