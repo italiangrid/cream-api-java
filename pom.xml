@@ -4,12 +4,14 @@
 
   <groupId>org.glite.ce</groupId>
   <artifactId>cream-api-parent</artifactId>
-  <version>1.16.5</version>
+  <version>1.16.6</version>
   <packaging>pom</packaging>
 
   <properties>
     <rpm.release>2</rpm.release>
     <rpm.pkgname>glite-ce-cream-api-java</rpm.pkgname>
+    
+    <axis.generator.version>1.6.4</axis.generator.version>
   </properties>
   
   <parent>
@@ -44,7 +46,7 @@
     <dependency>
       <groupId>org.glite.ce</groupId>
       <artifactId>cream-common</artifactId>
-      <version>1.16.4</version>
+      <version>1.16.5</version>
       <scope>compile</scope>
     </dependency>
 
@@ -65,9 +67,14 @@
 
     <dependency>
       <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2</artifactId>
+      <artifactId>axis2-kernel</artifactId>
     </dependency>
-    
+ 
+    <dependency>
+      <groupId>org.apache.axis2</groupId>
+      <artifactId>axis2-adb</artifactId>
+    </dependency>
+ 
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
