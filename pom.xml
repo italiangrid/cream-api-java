@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <rpm.release>2</rpm.release>
+    <rpm.release>1</rpm.release>
     <rpm.pkgname>glite-ce-cream-api-java</rpm.pkgname>
     
     <axis.generator.version>1.6.4</axis.generator.version>
