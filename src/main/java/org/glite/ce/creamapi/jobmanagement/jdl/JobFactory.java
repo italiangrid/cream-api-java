@@ -26,8 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.glite.ce.creamapi.jobmanagement.Job;
+import org.apache.log4j.Logger;
+
 
 public class JobFactory {
+    private static final Logger logger = Logger.getLogger(JobFactory.class.getName());
 
     private static boolean checkFileSandbox(String filename, List<String> sandbox) throws Exception {
         boolean found = false;
@@ -76,7 +79,7 @@ public class JobFactory {
         job.setStandardInput(jdl.getStandardInput());
         job.setStandardOutput(jdl.getStandardOutput());
         job.setStandardError(jdl.getStandardError());
-
+        
         String args = jdl.getArguments();
         if (args != null) {
            ArrayList<String> arguments = new ArrayList<String>(1);
@@ -137,10 +140,32 @@ public class JobFactory {
             }
         }
 
+
+        int micNumber = jdl.getMICNumber();
+        if (micNumber > 0) {
+            job.addExtraAttribute(JDL.MIC_NUMBER, "" + micNumber);
+        }
+
+        int gpuNumber = jdl.getGPUNumber();
+        if (gpuNumber > 0) {
+            job.addExtraAttribute(JDL.GPU_NUMBER, "" + gpuNumber);
+        }
+         
+        String gpuMode = jdl.getGPUMode();
+        if (gpuMode != null) {
+            job.addExtraAttribute(JDL.GPU_MODE, gpuMode);
+        }
+
+        String gpuModel = jdl.getGPUModel();
+        if (gpuModel != null) {
+            job.addExtraAttribute(JDL.GPU_MODEL, gpuModel);
+        }
+
         boolean isWholeNodes = jdl.isWholeNodes();
         job.addExtraAttribute(JDL.WHOLENODES, "" + isWholeNodes);
 
         int smpGranularity = jdl.getSMPGranularity();
+
         if (smpGranularity > 0) {
             job.addExtraAttribute(JDL.SMPGRANULARITY, "" + smpGranularity);
         }

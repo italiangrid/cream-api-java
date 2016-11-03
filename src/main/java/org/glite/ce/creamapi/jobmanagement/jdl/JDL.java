@@ -70,6 +70,11 @@ public class JDL {
     public static final String VIRTUALORGANISATION = "VirtualOrganisation";
     public static final String WHOLENODES = "WholeNodes";
     public static final String WMS_HOSTNAME = "WMS_HOSTNAME";
+    public static final String MIC_NUMBER = "MICNumber";
+    public static final String GPU_NUMBER = "GPUNumber";
+    public static final String GPU_MODE = "GPUMode";
+    public static final String GPU_MODEL = "GPUModel";
+
 
     private Hashtable<String, Expr> attributes = null;
     private String jdl = null;
@@ -263,6 +268,42 @@ public class JDL {
         return checkAttributeFile(EXECUTABLE, true, true);
     }
 
+    public int getMICNumber() throws Exception {
+        Integer value = (Integer) getValue(MIC_NUMBER, Expr.INTEGER, false);
+
+        if (value != null) {
+            if (value <= 0) {
+                throw new Exception(MIC_NUMBER + ": the value must be >=1");
+            } else {
+                return value.intValue();
+            }
+        }
+
+        return 0;
+    }
+
+    public int getGPUNumber() throws Exception {
+        Integer value = (Integer) getValue(GPU_NUMBER, Expr.INTEGER, false);
+
+        if (value != null) {
+            if (value <= 0) {
+                throw new Exception(GPU_NUMBER + ": the value must be >=1");
+            } else {
+                return value.intValue();
+            }
+        }
+        
+        return 0;
+    }
+    
+    public String getGPUMode() throws Exception {
+        return (String) getValue(GPU_MODE, Expr.STRING, false);
+    }
+   
+    public String getGPUModel() throws Exception {
+        return (String) getValue(GPU_MODEL, Expr.STRING, false);
+    }
+ 
     public String getHLRLocation() throws Exception {
         return (String) getValue(HLRLOCATION, Expr.STRING, false);
     }
