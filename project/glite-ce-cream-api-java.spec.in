@@ -44,6 +44,10 @@ rm -rf %{buildroot}
 
 %changelog
 * Mon Dec 15 2014 CREAM group <cream-support@lists.infn.it> - @PKGVERSION@-@PKGRELEASE@
+- Changes for CentOS 7
+- Support for GPUs
+
+* Mon Dec 15 2014 CREAM group <cream-support@lists.infn.it> - 1.16.5-2
 - Fix for bug https://issues.infn.it/jira/browse/CREAM-172
 
 * Mon Jun 30 2014 CREAM group <cream-support@lists.infn.it> - 1.16.4-2
