@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <rpm.release>2</rpm.release>
+    <rpm.release>3</rpm.release>
     <rpm.pkgname>glite-ce-cream-api-java</rpm.pkgname>
     
     <axis.generator.version>1.6.4</axis.generator.version>
@@ -57,11 +57,6 @@
     <dependency>
       <groupId>org.glite.lb</groupId>
       <artifactId>lb-client-java</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
     </dependency>
 
     <dependency>

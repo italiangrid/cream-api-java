@@ -1,14 +1,14 @@
 Summary: Java libraries for the CREAM service
 Name: @PKGNAME@
 Version: @PKGVERSION@
-Release: @PKGRELEASE@%{?dist}%{!?dist:.el5}
+Release: @PKGRELEASE@%{?dist}
 License: Apache Software License
 Vendor: EMI
 URL: http://glite.cern.ch/
 Group: System Environment/Libraries
 BuildArch: noarch
 BuildRequires: maven
-Requires: axis2, bouncycastle, jclassads
+Requires: axis2, jclassads
 Requires: glite-ce-common-java, glite-jdl-api-java
 Requires: glite-lb-client-java, canl-java 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
